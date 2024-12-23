@@ -2,7 +2,7 @@ import managers.TaskManager;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
-import status.Status;
+import tasks.Status;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ public class Main {
     public static void main(String[] args) {
 
         System.out.println("Создать задачу");
-        taskManager.addTask(new Task("Задача-1", "Описание задачи-1", Status.NEW.toString()));
-        taskManager.addTask(new Task("Задача-2", "Описание задачи-2", Status.NEW.toString()));
-        System.out.println(taskManager.getTasks());
+        taskManager.addTask(new Task("Задача-1", "Описание задачи-1"));
+        taskManager.addTask(new Task("Задача-2", "Описание задачи-2"));
+        System.out.println(taskManager.getAllTasks());
         System.out.println();
 
         System.out.println("Получить все задачи");
@@ -28,15 +28,15 @@ public class Main {
         System.out.println();
 
         System.out.println("Обновить полученную задачу");
-        task.setStatus(Status.IN_PROGRESS.toString());
+        task.setStatus(Status.IN_PROGRESS);
         taskManager.updateTask(task);
         System.out.println(task);
         System.out.println();
 
         System.out.println("Создать эпик");
-        taskManager.addEpic(new Epic("Эпик-1", "Описание эпика-1", Status.NEW.toString()));
-        taskManager.addEpic(new Epic("Эпик-2", "Описание эпика-2", Status.NEW.toString()));
-        System.out.println(taskManager.getEpics());
+        taskManager.addEpic(new Epic("Эпик-1", "Описание эпика-1"));
+        taskManager.addEpic(new Epic("Эпик-2", "Описание эпика-2"));
+        System.out.println(taskManager.getAllEpics());
         System.out.println();
 
         System.out.println("Получить все эпики");
@@ -50,15 +50,15 @@ public class Main {
 
         System.out.println("Обновить полученный эпик");
         taskManager.updateEpic(taskManager.getEpicById(3));
-        epic.setStatus(Status.IN_PROGRESS.toString());
+        epic.setStatus(Status.IN_PROGRESS);
         System.out.println(epic);
         System.out.println();
 
         System.out.println("Создать подзадачу");
-        taskManager.addSubtask(new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW.toString(), 3));
-        taskManager.addSubtask(new Subtask("Подзадача-2", "Описание подзадачи-2", Status.NEW.toString(), 3));
-        taskManager.addSubtask(new Subtask("Подзадача-3", "Описание подзадачи-3", Status.NEW.toString(), 4));
-        System.out.println(taskManager.getSubtasks());
+        taskManager.addSubtask(new Subtask("Подзадача-1", "Описание подзадачи-1", 3));
+        taskManager.addSubtask(new Subtask("Подзадача-2", "Описание подзадачи-2", 3));
+        taskManager.addSubtask(new Subtask("Подзадача-3", "Описание подзадачи-3", 4));
+        System.out.println(taskManager.getAllSubtasks());
         System.out.println();
 
         System.out.println("Получить все подзадачи по эпику c id-3");
@@ -76,7 +76,7 @@ public class Main {
         System.out.println();
 
         System.out.println("Обновить полученную подзадачу");
-        subtask.setStatus(Status.IN_PROGRESS.toString());
+        subtask.setStatus(Status.IN_PROGRESS);
         taskManager.updateSubtask(subtask);
         System.out.println(subtask);
         System.out.println();

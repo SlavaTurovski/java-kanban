@@ -5,14 +5,13 @@ import tasks.Subtask;
 import tasks.Task;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public interface ITaskManager {
 
-    void addTask(Task task);
-    void addEpic(Epic epic);
-    void addSubtask(Subtask subtask);
+    int addTask(Task task);
+    int addEpic(Epic epic);
+    int addSubtask(Subtask subtask);
 
     ArrayList<Task> getAllTasks();
     ArrayList<Epic> getAllEpics();
@@ -35,11 +34,5 @@ public interface ITaskManager {
     void deleteAllSubtasks();
 
     List<Subtask> getSubtasksByEpicId(int id);
-
-    void updateStatusEpic(Epic epic);
-
-    HashMap<Integer, Task> getTasks();
-    HashMap<Integer, Subtask> getSubtasks();
-    HashMap<Integer, Epic> getEpics();
 
 }
