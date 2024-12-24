@@ -20,43 +20,45 @@ public class TaskManager implements ITaskManager {
         return ++id;
     }
 
-    private void  updateStatusEpic(Epic epic) {
-        if (epics.containsKey(epic.getId())) {
-            if (epic.getSubTaskId().isEmpty()) {
-                epic.setStatus(Status.NEW);
-            } else {
-                List<Subtask> subtasksNew = new ArrayList<>();
-                int countDone = 0;
-                int countNew = 0;
-
-                for (int i = 0; i < epic.getSubTaskId().size(); i++) {
-                    subtasksNew.add(subTasks.get(epic.getSubTaskId().get(i)));
-                }
-
-                for (Subtask subtask : subtasksNew) {
-                    if (subtask.getStatus().equals(Status.DONE)) {
-                        countDone++;
-                    }
-                    if (subtask.getStatus().equals(Status.NEW)) {
-                        countNew++;
-                    }
-                    if (subtask.getStatus().equals(Status.IN_PROGRESS)) {
-                        epic.setStatus(Status.IN_PROGRESS);
-                        return;
-                    }
-                }
-
-                if (countDone == epic.getSubTaskId().size()) {
-                    epic.setStatus(Status.DONE);
-                } else if (countNew == epic.getSubTaskId().size()) {
-                    epic.setStatus(Status.NEW);
-                } else {
-                    epic.setStatus(Status.IN_PROGRESS);
-                }
-            }
-        } else {
+    private void updateStatusEpic(Epic epic) {
+        if (!epics.containsKey(epic.getId())) {    // Проверяем наличие эпика
             System.out.println("Эпик не найден!");
+            return;
         }
+        if (epic.getSubTaskId().isEmpty()) {    // Если у эпика нет подзадач, устанавливаем статус NEW
+            epic.setStatus(Status.NEW);
+            return;
+        }
+        List<Subtask> subtasks = getSubtasksForEpic(epic);    // Создаем список подзадач для текущего эпика
+        int countDone = countSubtasksWithStatus(subtasks, Status.DONE);    // Считаем количество завершенных и новых подзадач
+        int countNew = countSubtasksWithStatus(subtasks, Status.NEW);
+        if (countDone == subtasks.size()) {    // Определяем статус эпика
+            epic.setStatus(Status.DONE);
+        } else if (countNew == subtasks.size()) {
+            epic.setStatus(Status.NEW);
+        } else {
+            epic.setStatus(Status.IN_PROGRESS);
+        }
+    }
+
+    private List<Subtask> getSubtasksForEpic(Epic epic) {     // Метод для получения списка подзадач по id
+        List<Subtask> subtasks = new ArrayList<>();
+        for (Integer subtaskId : epic.getSubTaskId()) {
+            Subtask subtask = subTasks.get(subtaskId);
+            subtasks.add(subtask);
+        }
+        return subtasks;
+    }
+
+    private int countSubtasksWithStatus(List<Subtask> subtasks, Status status) {     // Метод для подсчета подзадач
+        // с определенным статусом
+        int count = 0;
+        for (Subtask subtask : subtasks) {
+            if (subtask.getStatus() == status) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override
