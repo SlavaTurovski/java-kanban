@@ -204,6 +204,7 @@ public class TaskManager implements ITaskManager {
     public void deleteTaskById(int id) {
         if (!tasks.containsKey(id)) {
             System.out.println("Задача не найдена!");
+            return;
         }
         tasks.remove(id);
     }
