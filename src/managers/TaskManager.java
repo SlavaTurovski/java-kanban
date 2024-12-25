@@ -229,7 +229,7 @@ public class TaskManager implements ITaskManager {
             return;
         }
         Epic epic = epics.get(subtask.getEpicId());
-        epic.getSubTaskId().remove((Integer) subtask.getId());
+        epic.getSubTaskId().remove(subtask.getId());
         updateStatusEpic(epic);
         subTasks.remove(id);
     }
