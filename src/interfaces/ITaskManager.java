@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface ITaskManager {
 
-    int addTask(Task task);
-    int addEpic(Epic epic);
-    int addSubtask(Subtask subtask);
+    Task addTask(Task task);
+    Epic addEpic(Epic epic);
+    Subtask addSubtask(Subtask subtask);
 
     ArrayList<Task> getAllTasks();
     ArrayList<Epic> getAllEpics();
