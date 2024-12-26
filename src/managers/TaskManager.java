@@ -80,16 +80,16 @@ public class TaskManager implements ITaskManager {
 
     @Override
     public Subtask addSubtask(Subtask subtask) {
-        int subtaskId = generateId();
         Epic epic = epics.get(subtask.getEpicId());
-        if (epic != null) {
-            subtask.setId(subtaskId);
-            subTasks.put(subtaskId, subtask);
-            epic.addSubtaskIds(subtaskId);
-            updateEpic(epic);
-        } else {
+        if (epic == null) {
             System.out.println("Эпик не создан!");
         }
+        int subtaskId = generateId();
+        subtask.setId(subtaskId);
+        subTasks.put(subtaskId, subtask);
+        assert epic != null;
+        epic.addSubtaskIds(subtaskId);
+        updateEpic(epic);
         return subtask;
     }
 
