@@ -1,47 +1,24 @@
 package tasks;
 
+import enums.Status;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Epic extends Task{
 
     protected List<Integer> subtaskId = new ArrayList<>();
 
-    public Epic(String name, String description) {
-        super(name, description);
+    public Epic(String name, String description, Status status) {
+        super(name, description, status);
     }
 
-    public void addSubtaskIds(int id) {
-        subtaskId.add(id);
+    public void addSubtaskId(int id) {
+        subtaskId = new ArrayList<>();
     }
 
-    public List<Integer> getSubTaskId() {
+    public List<Integer> getSubtaskId() {
         return subtaskId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Epic epic = (Epic) o;
-        return Objects.equals(subtaskId, epic.subtaskId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), subtaskId);
-    }
-
-    @Override
-    public String toString() {
-        return "Epic{" +
-                "subtaskId=" + subtaskId +
-                ", id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
-                '}';
-    }
 }

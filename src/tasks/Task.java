@@ -1,5 +1,7 @@
 package tasks;
 
+import enums.Status;
+
 import java.util.Objects;
 
 public class Task {
@@ -9,9 +11,9 @@ public class Task {
     protected Status status;
     protected String description;
 
-    public Task(String name, String description) {
+    public Task(String name, String description, Status status) {
         this.name = name;
-        status = Status.NEW;
+        this.status = status;
         this.description = description;
     }
 
