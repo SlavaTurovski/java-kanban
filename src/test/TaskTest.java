@@ -9,6 +9,7 @@ import tasks.Task;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TaskTest {
+
     InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();
 
     //1-Проверка того что экземпляры класса Task равны друг другу, если равен их id
