@@ -31,7 +31,7 @@ class EpicTest {
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, epic1.getId());
         subtask1.setId(epic1.getId());
         taskManager.addSubtask(subtask1);
-        assertFalse(epic1.getSubtaskId().isEmpty(), "Эпик не может добавить себя в качестве подзадачи");
+        assertFalse(epic1.getSubtaskIdInEpic().isEmpty(), "Эпик не может добавить себя в качестве подзадачи");
     }
 
 }

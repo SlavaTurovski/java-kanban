@@ -22,46 +22,37 @@ public class InMemoryTaskManager implements interfaces.TaskManager {
         return id++;
     }
 
-    private void updateStatusEpic(Epic epic) {
-        if (!epics.containsKey(epic.getId())) {    // Проверяем наличие эпика
-            System.out.println("Эпик не найден!");
+    private void updateStatusEpic(int epicId) {
+        List<Subtask> subtasks = getSubtasksByEpicId(epicId);
+        if (subtasks.isEmpty()) {
+            epics.get(epicId).setStatus(Status.NEW);
             return;
         }
-        if (epic.getSubtaskId().isEmpty()) {    // Если у эпика нет подзадач, устанавливаем статус NEW
-            epic.setStatus(Status.NEW);
-            return;
-        }
-        List<Subtask> subtasks = getSubtasksForEpic(epic);    // Создаем список подзадач для текущего эпика
-        int countDone = countSubtasksWithStatus(subtasks, Status.DONE);    // Считаем количество завершенных и новых подзадач
-        int countNew = countSubtasksWithStatus(subtasks, Status.NEW);
-        if (countDone == subtasks.size()) {    // Определяем статус эпика
-            epic.setStatus(Status.DONE);
-        } else if (countNew == subtasks.size()) {
-            epic.setStatus(Status.NEW);
-        } else {
-            epic.setStatus(Status.IN_PROGRESS);
-        }
-    }
 
-    private List<Subtask> getSubtasksForEpic(Epic epic) {     // Метод для получения списка подзадач по id
-        List<Subtask> subtasks = new ArrayList<>();
-        for (Integer subtaskId : epic.getSubtaskId()) {
-            Subtask subtask = subtasks.get(subtaskId);
-            subtasks.add(subtask);
-        }
-        return subtasks;
-    }
-
-    // Метод для подсчета подзадач с определенным статусом
-    private int countSubtasksWithStatus(List<Subtask> subtasks, Status status) {
-        int count = 0;
+        boolean isNew = true;
+        boolean isDone = true;
         for (Subtask subtask : subtasks) {
-            if (subtask.getStatus() == status) {
-                count++;
+            Status subtaskStatus = subtask.getStatus();
+            if (subtaskStatus != Status.DONE) {
+                isDone = false;
+            }
+            if (subtaskStatus != Status.NEW) {
+                isNew = false;
             }
         }
-        return count;
+
+        if (isDone) {
+            epics.get(epicId).setStatus(Status.DONE);
+        } else if (isNew) {
+            epics.get(epicId).setStatus(Status.NEW);
+        } else if (!isDone && !isNew) {
+            epics.get(epicId).setStatus(Status.IN_PROGRESS);
+        }
     }
+
+
+
+
 
     @Override
     public void addTask(Task task) {
@@ -75,7 +66,7 @@ public class InMemoryTaskManager implements interfaces.TaskManager {
         int epicId = generateId();
         epic.setId(epicId);
         epics.put(epicId, epic);
-        updateStatusEpic(epic);
+        updateStatusEpic(epic.getId());
     }
 
     @Override
@@ -88,7 +79,7 @@ public class InMemoryTaskManager implements interfaces.TaskManager {
         int subtaskId = generateId();
         subtask.setId(subtaskId);
         subtasks.put(subtaskId, subtask);
-        epic.addSubtaskId(subtaskId);
+        epic.getSubtaskIdInEpic().add(subtaskId);
         updateEpic(epic);
     }
 
@@ -159,7 +150,7 @@ public class InMemoryTaskManager implements interfaces.TaskManager {
     public void updateEpic(Epic epic) {
         if (epics.containsKey(epic.getId())) {
             epics.put(epic.getId(), epic);
-            updateStatusEpic(epic);
+            updateStatusEpic(epic.getId());
         } else {
             System.out.println("Эпик не найден!");
         }
@@ -170,7 +161,7 @@ public class InMemoryTaskManager implements interfaces.TaskManager {
         if (subtasks.containsKey(subtask.getId())) {
             subtasks.put(subtask.getId(), subtask);
             Epic epic = epics.get(subtask.getEpicId());
-            updateStatusEpic(epic);
+            updateStatusEpic(epic.getId());
         } else {
             System.out.println("Подзадача не найдена!");
         }
@@ -185,7 +176,7 @@ public class InMemoryTaskManager implements interfaces.TaskManager {
     @Override
     public void deleteAllEpics() {
         for (Epic epic : epics.values()) {
-            epic.getSubtaskId().clear();
+            epic.getSubtaskIdInEpic().clear();
         }
         subtasks.clear();
         epics.clear();
@@ -195,8 +186,8 @@ public class InMemoryTaskManager implements interfaces.TaskManager {
     @Override
     public void deleteAllSubtasks() {
         for (Epic epic : epics.values()) {
-            epic.getSubtaskId().clear();
-            updateStatusEpic(epic);
+            epic.getSubtaskIdInEpic().clear();
+            updateStatusEpic(epic.getId());
         }
         subtasks.clear();
         System.out.println("Все подзадачи успешно удалены!");
@@ -218,7 +209,7 @@ public class InMemoryTaskManager implements interfaces.TaskManager {
             System.out.println("Эпик не найден!");
             return;
         }
-        for (Integer subtaskId : epic.getSubtaskId()) {
+        for (Integer subtaskId : epic.getSubtaskIdInEpic()) {
             subtasks.remove(subtaskId);
         }
         epics.remove(id);
@@ -232,8 +223,8 @@ public class InMemoryTaskManager implements interfaces.TaskManager {
             return;
         }
         Epic epic = epics.get(subtask.getEpicId());
-        epic.getSubtaskId().remove(subtask.getId());
-        updateStatusEpic(epic);
+        epic.getSubtaskIdInEpic().remove(subtask.getId());
+        updateStatusEpic(epic.getId());
         subtasks.remove(id);
     }
 
@@ -244,7 +235,7 @@ public class InMemoryTaskManager implements interfaces.TaskManager {
         }
         Epic epic = epics.get(id);
         List<Subtask> subtasksNew = new ArrayList<>();
-        for (Integer subtaskId : epic.getSubtaskId()) {
+        for (Integer subtaskId : epic.getSubtaskIdInEpic()) {
             subtasksNew.add(subtasks.get(subtaskId));
         }
         return subtasksNew;
