@@ -13,7 +13,7 @@ class EpicTest {
 
     InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();
 
-    //2-Проверка того проверьте, что наследники класса Task равны друг другу, если равен их id
+    //2-Проверка того что наследники класса Task равны друг другу, если равен их id
     @Test
     public void epicIdMustBeEquals() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);

@@ -13,7 +13,7 @@ class SubtaskTest {
 
     InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();
 
-    //2-Проверка того проверьте, что наследники класса Task равны друг другу, если равен их id
+    //2-Проверка того что наследники класса Task равны друг другу, если равен их id
     @Test
     public void subtaskIdMustBeEquals() {
         Subtask subtask = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, 1);

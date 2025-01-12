@@ -20,7 +20,7 @@ class InMemoryTaskManagerTest {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         taskManager.addTask(task1);
         Task taskActual = taskManager.getTaskById(task1.getId());
-        assertEquals(task1, taskActual);
+        assertEquals(task1, taskActual, "Задача добавляется");
     }
 
     //6-Проверка того что InMemoryTaskManager действительно добавляет задачи типа - EPIC
@@ -29,7 +29,7 @@ class InMemoryTaskManagerTest {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Epic epicActual = taskManager.getEpicById(epic1.getId());
-        assertEquals(epic1, epicActual);
+        assertEquals(epic1, epicActual, "Эпик добавляется");
     }
 
     //6-Проверка того что InMemoryTaskManager действительно добавляет задачи типа - SUBTASK
@@ -40,7 +40,7 @@ class InMemoryTaskManagerTest {
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, epic1.getId());
         taskManager.addSubtask(subtask1);
         Subtask subtaskActual = taskManager.getSubtaskById(subtask1.getId());
-        assertEquals(subtask1, subtaskActual);
+        assertEquals(subtask1, subtaskActual, "Подзадача добавляется");
     }
 
     //7-Проверка того что задачи с заданным id и сгенерированным id не конфликтуют внутри менеджера
@@ -52,6 +52,6 @@ class InMemoryTaskManagerTest {
         taskManager.addTask(task2);
         task2.setId(1);
         taskManager.addTask(task2);
-        assertNotEquals(task1.getId(), task2.getId());
+        assertNotEquals(task1.getId(), task2.getId(), "Задачи не конфликтуют");
     }
 }
