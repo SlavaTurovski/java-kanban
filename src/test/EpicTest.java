@@ -20,7 +20,7 @@ class EpicTest {
         Epic epic2 = new Epic("Эпик-2", "Описание эпика-2", Status.NEW);
         epic1.setId(1);
         epic2.setId(1);
-        assertEquals(epic1.getId(), epic2.getId(), "ID не равны!");
+        assertEquals(epic1.getId(), epic2.getId(), "Эпики равны т.к. равны их id");
     }
 
     //3-Проверка того что объект Epic нельзя добавить в самого себя в виде подзадачи
@@ -31,7 +31,7 @@ class EpicTest {
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, epic1.getId());
         subtask1.setId(epic1.getId());
         taskManager.addSubtask(subtask1);
-        assertFalse(epic1.getSubtaskIdInEpic().isEmpty(), "Эпик не может добавить себя в качестве подзадачи");
+        assertFalse(epic1.getSubtaskIdInEpic().isEmpty(), "Объект эпик может добавить себя в виде подзадачи");
     }
 
 }

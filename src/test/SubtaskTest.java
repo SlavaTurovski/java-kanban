@@ -16,11 +16,11 @@ class SubtaskTest {
     //2-Проверка того проверьте, что наследники класса Task равны друг другу, если равен их id
     @Test
     public void subtaskIdMustBeEquals() {
-        Subtask subtask = new Subtask("1", "1", Status.NEW, 1);
-        Subtask subtask1 = new Subtask("2", "1", Status.NEW, 1);
+        Subtask subtask = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, 1);
+        Subtask subtask1 = new Subtask("Подзадача-2", "Описание подзадачи-2", Status.NEW, 1);
         subtask.setId(1);
         subtask1.setId(1);
-        assertEquals(subtask.getId(), subtask1.getId(), "Идентификаторы не равны");
+        assertEquals(subtask.getId(), subtask1.getId(), "Подзадачи равны т.к. равны их id");
     }
 
     //4-Проверка того что объект Subtask нельзя сделать своим же эпиком
@@ -31,7 +31,7 @@ class SubtaskTest {
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, epic1.getId());
         taskManager.addSubtask(subtask1);
         subtask1.setId(subtask1.getId());
-        assertNotEquals(subtask1.getId(), subtask1.getEpicId(), "Подзадача не может быть собственным эпиком");
+        assertNotEquals(subtask1.getId(), subtask1.getEpicId(), "Объект Subtask нельзя сделать своим же эпиком");
     }
 
 }

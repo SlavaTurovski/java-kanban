@@ -50,10 +50,6 @@ public class InMemoryTaskManager implements interfaces.TaskManager {
         }
     }
 
-
-
-
-
     @Override
     public void addTask(Task task) {
         int taskId = generateId();
