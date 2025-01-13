@@ -1,9 +1,8 @@
 package tasks;
 
-import enums.Status;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Epic extends Task{
 
@@ -18,4 +17,28 @@ public class Epic extends Task{
         return subtaskId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return Objects.equals(subtaskId, epic.subtaskId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), subtaskId);
+    }
+
+    @Override
+    public String toString() {
+        return "Epic {" +
+                "id=" + id +
+                ", subtaskId=" + subtaskId +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }

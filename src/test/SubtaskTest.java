@@ -1,6 +1,6 @@
 package test;
 
-import enums.Status;
+import tasks.Status;
 import manager.InMemoryTaskManager;
 import manager.Managers;
 import org.junit.jupiter.api.Test;
@@ -15,23 +15,23 @@ class SubtaskTest {
 
     //2-Проверка того что наследники класса Task равны друг другу, если равен их id
     @Test
-    public void subtaskIdMustBeEquals() {
+    public void equals_returnTrue_IfIdIsSame() {
         Subtask subtask = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, 1);
         Subtask subtask1 = new Subtask("Подзадача-2", "Описание подзадачи-2", Status.NEW, 1);
         subtask.setId(1);
         subtask1.setId(1);
-        assertEquals(subtask.getId(), subtask1.getId(), "Подзадачи равны т.к. равны их id");
+        assertEquals(subtask.getId(), subtask1.getId(), "Подзадачи должны быть равны по id");
     }
 
     //4-Проверка того что объект Subtask нельзя сделать своим же эпиком
     @Test
-    public void subtaskNotMakeEpic() {
+    public void notEquals_returnTrue_IfAddSubtaskAsItsOwnEpic() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, epic1.getId());
         taskManager.addSubtask(subtask1);
         subtask1.setId(subtask1.getId());
-        assertNotEquals(subtask1.getId(), subtask1.getEpicId(), "Объект Subtask нельзя сделать своим же эпиком");
+        assertNotEquals(subtask1.getId(), subtask1.getEpicId(), "Подзадача не должна стать своим же эпиком");
     }
 
 }

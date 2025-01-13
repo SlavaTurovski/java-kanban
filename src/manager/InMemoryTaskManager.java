@@ -1,14 +1,16 @@
 package manager;
 
 import interfaces.HistoryManager;
+import interfaces.TaskManager;
 import tasks.Epic;
-import enums.Status;
+import tasks.Status;
 import tasks.Subtask;
 import tasks.Task;
 
 import java.util.*;
 
-public class InMemoryTaskManager implements interfaces.TaskManager {
+
+public class InMemoryTaskManager implements TaskManager {
 
     private int id = 1;
 
@@ -16,7 +18,11 @@ public class InMemoryTaskManager implements interfaces.TaskManager {
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
 
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    private final HistoryManager historyManager;
+
+    public InMemoryTaskManager(HistoryManager historyManager) {
+        this.historyManager = historyManager;
+    }
 
     private int generateId() {
         return id++;

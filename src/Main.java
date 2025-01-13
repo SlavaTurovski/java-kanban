@@ -3,7 +3,7 @@ import manager.Managers;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
-import enums.Status;
+import tasks.Status;
 
 import java.util.List;
 
@@ -49,14 +49,12 @@ public class Main {
 
         System.out.println("Вывести список");
         printAllTasks();
-
-        System.out.println("Получить все подзадачи по эпику c id-3");
-        List<Subtask> subtasksByEpicId = taskManager.getSubtasksByEpicId(3);
-        System.out.println(subtasksByEpicId);
         System.out.println();
 
-        System.out.println("Получить все подзадачи");
-        System.out.println(taskManager.getAllSubtasks());
+        System.out.println("Получить все подзадачи по эпику c id-3");
+        for (Task subtask2: taskManager.getSubtasksByEpicId(3)) {
+            System.out.println(subtask2);
+        }
         System.out.println();
 
         System.out.println("Получить подзадачу c id-5");
@@ -70,9 +68,11 @@ public class Main {
         System.out.println(subtask);
         System.out.println();
 
-        System.out.println("Удалить задачу c id-3 и показать оставшиеся задачи");
-        taskManager.deleteTaskById(3);
-        System.out.println(taskManager.getAllTasks());
+        System.out.println("Удалить задачу c id-2 и показать оставшиеся задачи");
+        taskManager.deleteTaskById(2);
+        for (Task task1 : taskManager.getAllTasks()) {
+            System.out.println(task1);
+        }
         System.out.println();
 
         System.out.println("Удаление всех задач");
@@ -82,7 +82,9 @@ public class Main {
 
         System.out.println("Удалить подзадачу c id-5 и показать оставшиеся подзадачи");
         taskManager.deleteSubtaskById(5);
-        System.out.println(taskManager.getAllSubtasks());
+        for (Task subtask3 : taskManager.getAllSubtasks()) {
+            System.out.println(subtask3);
+        }
         System.out.println();
 
         System.out.println("Удалить все подзадачи");
