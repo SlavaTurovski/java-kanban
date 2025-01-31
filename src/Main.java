@@ -121,7 +121,6 @@ public class Main {
         for (Task subtask : taskManager.getAllSubtasks()) {
             System.out.println(subtask);
         }
-
         System.out.println("История:");
         for (Task task : taskManager.getHistory()) {
             System.out.println(task);

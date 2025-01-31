@@ -2,7 +2,6 @@ package test;
 
 import tasks.Status;
 import manager.InMemoryTaskManager;
-import manager.Managers;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
@@ -11,7 +10,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SubtaskTest {
 
-    InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();
+    private final InMemoryTaskManager taskManager;
+
+    public SubtaskTest() {
+        this.taskManager = new InMemoryTaskManager();
+    }
 
     //2-Проверка того что наследники класса Task равны друг другу, если равен их id
     @Test

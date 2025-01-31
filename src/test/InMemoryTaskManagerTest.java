@@ -2,7 +2,6 @@ package test;
 
 import tasks.Status;
 import manager.InMemoryTaskManager;
-import manager.Managers;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
@@ -12,7 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
 
-    InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();
+    private final InMemoryTaskManager taskManager;
+
+    public InMemoryTaskManagerTest() {
+        this.taskManager = new InMemoryTaskManager();
+    }
 
     //6-Проверка того что InMemoryTaskManager действительно добавляет задачи типа - TASK
     @Test
