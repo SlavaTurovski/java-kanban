@@ -5,8 +5,6 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.Status;
 
-import java.util.List;
-
 public class Main {
 
     static InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();
