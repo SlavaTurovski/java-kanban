@@ -39,7 +39,7 @@ class SubtaskTest {
 
     //ТЗ-6 Проверка того что удаляемые подзадачи не должны хранить внутри себя старые id
     @Test
-    public void FalseAndNull_returnTrue_IfDeletedSubTaskNoContainsOldId() {
+    public void falseAndNull_returnTrue_IfDeletedSubTaskNoContainsOldId() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, epic1.getId());
