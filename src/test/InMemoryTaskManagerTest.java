@@ -58,4 +58,5 @@ class InMemoryTaskManagerTest {
         assertNotEquals(task1.getId(), task2.getId(), "Задачи с заданным id и сгенерированным id не должны " +
                 "конфликтовать");
     }
+
 }

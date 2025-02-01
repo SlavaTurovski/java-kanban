@@ -48,4 +48,5 @@ class SubtaskTest {
         assertFalse(epic1.getSubtaskIdInEpic().contains(subtask1.getId()));
         assertNull(taskManager.getSubtaskById(subtask1.getId()), "Подзадачи не должны хранить внутри себя старые id");
     }
+
 }
