@@ -5,8 +5,6 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.Status;
 
-import java.util.List;
-
 public class Main {
 
     static InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();
@@ -52,7 +50,7 @@ public class Main {
         System.out.println();
 
         System.out.println("Получить все подзадачи по эпику c id-3");
-        for (Task subtask2: taskManager.getSubtasksByEpicId(3)) {
+        for (Task subtask2 : taskManager.getSubtasksByEpicId(3)) {
             System.out.println(subtask2);
         }
         System.out.println();
@@ -109,6 +107,7 @@ public class Main {
         for (Task task : taskManager.getAllTasks()) {
             System.out.println(task);
         }
+
         System.out.println("Эпики:");
         for (Task epic : taskManager.getAllEpics()) {
             System.out.println(epic);
@@ -117,10 +116,12 @@ public class Main {
                 System.out.println("--> " + task);
             }
         }
+
         System.out.println("Подзадачи:");
         for (Task subtask : taskManager.getAllSubtasks()) {
             System.out.println(subtask);
         }
+
         System.out.println("История:");
         for (Task task : taskManager.getHistory()) {
             System.out.println(task);
