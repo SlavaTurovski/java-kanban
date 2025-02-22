@@ -3,12 +3,11 @@ package manager;
 import interfaces.HistoryManager;
 import interfaces.TaskManager;
 
-import java.io.File;
 
 public class Managers {
 
     public static TaskManager getDefault() {
-        return FileBackedTaskManager.loadFromFile(new File("tasks.csv"));
+        return new InMemoryTaskManager();
     }
 
     public static HistoryManager getDefaultHistory() {
