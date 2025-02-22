@@ -6,7 +6,6 @@ import tasks.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.List;
 
 import static manager.CSVTaskFormat.fromString;
 
@@ -86,11 +85,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task getTaskById(int id) {
-        return super.getTaskById(id);
-    }
-
-    @Override
     public void deleteAllTasks() {
         super.deleteAllTasks();
         save();
@@ -116,11 +110,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Epic getEpicById(int id) {
-        return super.getEpicById(id);
-    }
-
-    @Override
     public void deleteAllEpics() {
         super.deleteAllEpics();
         save();
@@ -143,21 +132,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         final int id = super.addSubtask(subtask);
         save();
         return id;
-    }
-
-    @Override
-    public Subtask getSubtaskById(int id) {
-        return super.getSubtaskById(id);
-    }
-
-    @Override
-    public List<Subtask> getAllSubtasks() {
-        return super.getAllSubtasks();
-    }
-
-    @Override
-    public List<Subtask> getSubtasksByEpicId(int id) {
-        return super.getSubtasksByEpicId(id);
     }
 
     @Override
@@ -206,6 +180,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         System.out.println(fileBackedTaskManager1.getAllTasks());
         System.out.println(fileBackedTaskManager1.getAllEpics());
         System.out.println(fileBackedTaskManager1.getAllSubtasks());
+
+        System.out.println();
 
         System.out.println(Files.readString(file.toPath()));
     }

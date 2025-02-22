@@ -25,10 +25,6 @@ public class InMemoryTaskManager implements TaskManager {
         return id++;
     }
 
-    protected void setActualId(int actualId) {
-        id = actualId;
-    }
-
     private void updateStatusEpic(int epicId) {
         List<Subtask> subtasks = getSubtasksByEpicId(epicId);
         if (subtasks.isEmpty()) {
@@ -268,18 +264,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public ArrayList<Task> getHistory() {
         return (ArrayList<Task>) historyManager.getHistory();
-    }
-
-    protected TaskType getTaskTypeById(int id) {
-        if (tasks.containsKey(id)) {
-            return TaskType.TASK;
-        } else if (epics.containsKey(id)) {
-            return TaskType.EPIC;
-        } else if (subtasks.containsKey(id)) {
-            return TaskType.SUBTASK;
-        } else {
-            return null;
-        }
     }
 
 }

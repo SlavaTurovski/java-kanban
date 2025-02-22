@@ -5,19 +5,19 @@ import tasks.*;
 public class CSVTaskFormat {
 
     public static String toString(Task task) {
-        StringBuilder result = new StringBuilder();
-        result.append(
-                task.getId() + ","
-                + task.getTaskType() + ","
-                + task.getName() + ","
-                + task.getStatus() + ","
-                + task.getDescription());
 
-        if (task.getTaskType() == TaskType.SUBTASK) {
-            result.append("," + ((Subtask)task).getEpicId());
-        }
+        StringBuilder result = new StringBuilder()
+                .append(task.getId()).append(",")
+                .append(task.getTaskType()).append(",")
+                .append(task.getName()).append(",")
+                .append(task.getStatus()).append(",")
+                .append(task.getDescription());
 
         return result.toString();
+    }
+
+    public static String toString(Subtask subtask) {
+        return toString((Task) subtask) + "," + subtask.getEpicId();
     }
 
     public static Task fromString(String value) {
