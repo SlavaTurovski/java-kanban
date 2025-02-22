@@ -2,10 +2,7 @@ package manager;
 
 import interfaces.HistoryManager;
 import interfaces.TaskManager;
-import tasks.Epic;
-import tasks.Status;
-import tasks.Subtask;
-import tasks.Task;
+import tasks.*;
 
 import java.util.*;
 
@@ -26,6 +23,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     private int generateId() {
         return id++;
+    }
+
+    protected void setActualId(int actualId) {
+        id = actualId;
     }
 
     private void updateStatusEpic(int epicId) {
@@ -57,32 +58,35 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addTask(Task task) {
+    public int addTask(Task task) {
         int taskId = generateId();
         task.setId(taskId);
         tasks.put(taskId, task);
+        return taskId;
     }
 
     @Override
-    public void addEpic(Epic epic) {
+    public int addEpic(Epic epic) {
         int epicId = generateId();
         epic.setId(epicId);
         epics.put(epicId, epic);
         updateStatusEpic(epic.getId());
+        return epicId;
     }
 
     @Override
-    public void addSubtask(Subtask subtask) {
+    public int addSubtask(Subtask subtask) {
         Epic epic = epics.get(subtask.getEpicId());
         if (epic == null) {
             System.out.println("Эпик не создан!");
-            return;
+            return 0;
         }
         int subtaskId = generateId();
         subtask.setId(subtaskId);
         subtasks.put(subtaskId, subtask);
         epic.getSubtaskIdInEpic().add(subtaskId);
         updateEpic(epic);
+        return subtaskId;
     }
 
     @Override
@@ -159,7 +163,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSubtask(Subtask subtask) {
+    public int updateSubtask(Subtask subtask) {
         if (subtasks.containsKey(subtask.getId())) {
             subtasks.put(subtask.getId(), subtask);
             Epic epic = epics.get(subtask.getEpicId());
@@ -167,6 +171,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             System.out.println("Подзадача не найдена!");
         }
+        return 0;
     }
 
     @Override
@@ -261,8 +266,20 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getHistory() {
-        return historyManager.getHistory();
+    public ArrayList<Task> getHistory() {
+        return (ArrayList<Task>) historyManager.getHistory();
+    }
+
+    protected TaskType getTaskTypeById(int id) {
+        if (tasks.containsKey(id)) {
+            return TaskType.TASK;
+        } else if (epics.containsKey(id)) {
+            return TaskType.EPIC;
+        } else if (subtasks.containsKey(id)) {
+            return TaskType.SUBTASK;
+        } else {
+            return null;
+        }
     }
 
 }

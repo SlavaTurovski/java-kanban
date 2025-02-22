@@ -22,9 +22,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail.setNext(node);
             node.setPrev(tail);
         }
-
         tail = node;
-        history.put(task.getId(), node);
     }
 
     private ArrayList<Task> getTasks() {
@@ -68,6 +66,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (task != null) {
             remove(task.getId());
             linkLast(task);
+            history.put(task.getId(), tail);
         }
     }
 
@@ -76,6 +75,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (history.isEmpty()) {
             return;
         }
+
         Node nodeToRemove = history.remove(id);
 
         if (nodeToRemove == null) {
@@ -87,7 +87,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        return new ArrayList<>(getTasks());
+        return getTasks();
     }
 
 }

@@ -41,4 +41,9 @@ public class Epic extends Task {
                 ", status=" + status +
                 '}';
     }
+
+    public TaskType getTaskType() {
+        return TaskType.EPIC;
+    }
+
 }

@@ -1,3 +1,4 @@
+import interfaces.TaskManager;
 import manager.InMemoryTaskManager;
 import manager.Managers;
 import tasks.Epic;
@@ -5,13 +6,15 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.Status;
 
+import java.io.File;
+
 public class Main {
 
-    static InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();
+    /*static InMemoryTaskManager taskManager = (InMemoryTaskManager) Managers.getDefault();*/
 
     public static void main(String[] args) {
 
-        System.out.println("Создать задачи...");
+        /*System.out.println("Создать задачи...");
         taskManager.addTask(new Task("Задача-1", "Описание задачи-1", Status.NEW));
         taskManager.addTask(new Task("Задача-2", "Описание задачи-2", Status.NEW));
 
@@ -125,7 +128,7 @@ public class Main {
         System.out.println("История:");
         for (Task task : taskManager.getHistory()) {
             System.out.println(task);
-        }
-    }
+        }*/
 
+    }
 }
