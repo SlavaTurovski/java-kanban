@@ -37,4 +37,15 @@ class EpicTest {
         assertFalse(epic1.getSubtaskIdInEpic().isEmpty(), "Объект эпика не должен добавлять себя в виде подзадачи");
     }
 
+    // ТЗ-6 Проверка того что внутри эпиков не должно оставаться неактуальных id подзадач
+    @Test
+    public void false_returnTrue_IfEpicNoContainsDeletedSubtasks() {
+        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, epic1.getId());
+        taskManager.addSubtask(subtask1);
+        taskManager.deleteAllSubtasks();
+        assertFalse(epic1.getSubtaskIdInEpic().contains(subtask1.getId()), "Внутри эпиков не должно оставаться неактуальных id подзадач");
+    }
+
 }

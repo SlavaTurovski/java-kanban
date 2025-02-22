@@ -36,4 +36,17 @@ class TaskTest {
         assertEquals(task1.getStatus(), taskManager.getTaskById(task1.getId()).getStatus(), "Поле должно быть неизменно");
     }
 
+    //ТЗ-6 Проверка на изменение задач сеттерами
+    @Test
+    public void equals_returnTrue_IfChangeValueBySetters() {
+        Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
+        taskManager.addTask(task1);
+        task1.setName("Новая Задача");
+        task1.setDescription("Новое описание задачи");
+        task1.setStatus(Status.IN_PROGRESS);
+        assertEquals("Новая Задача", task1.getName(), "Сеттер должен изменить имя");
+        assertEquals("Новое описание задачи", task1.getDescription(), "Сеттер должен изменить описание");
+        assertEquals(Status.IN_PROGRESS, task1.getStatus(), "Сеттер должен изменить статус");
+    }
+
 }
