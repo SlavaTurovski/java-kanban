@@ -13,7 +13,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private final File file;
 
-    public FileBackedTaskManager(File file) {
+    private FileBackedTaskManager(File file) {
         this.file = file;
         if (!file.exists()) {
             try {
@@ -25,27 +25,33 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public static FileBackedTaskManager loadFromFile(File file) {
-        FileBackedTaskManager manager = new FileBackedTaskManager(file);
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            FileBackedTaskManager manager = new FileBackedTaskManager(file);
 
-            String line = reader.readLine();
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 
-            while ((line = reader.readLine()) != null) {
-                Task task = fromString(line);
+               String line = reader.readLine();
 
-                if (task instanceof Epic) {
-                    manager.addEpic((Epic) task);
-                } else if (task instanceof Subtask) {
-                    manager.addSubtask((Subtask) task);
-                } else {
-                    manager.addTask(task);
+                while ((line = reader.readLine()) != null) {
+                    Task task = fromString(line);
+
+                    switch (task.getTaskType()) {
+                        case EPIC:
+                            manager.epics.put(task.getId(), (Epic) task);
+                            break;
+                        case SUBTASK:
+                            manager.subtasks.put(task.getId(), (Subtask) task);
+                            break;
+                        default:
+                            manager.tasks.put(task.getId(), task);
+                            break;
+                    }
                 }
+
+            } catch (IOException e) {
+                throw new ManagerSaveException("Произошла ошибка загрузки из файла!" + e.getMessage());
             }
 
-        } catch (IOException e) {
-            throw new ManagerSaveException("Произошла ошибка загрузки из файла!" + e.getMessage());
-        }
         return manager;
 
     }
