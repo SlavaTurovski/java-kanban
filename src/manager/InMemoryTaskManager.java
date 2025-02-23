@@ -6,10 +6,9 @@ import tasks.*;
 
 import java.util.*;
 
-
 public class InMemoryTaskManager implements TaskManager {
 
-    private int id = 1;
+    int id = 1;
 
     final Map<Integer, Task> tasks = new HashMap<>();
     final Map<Integer, Epic> epics = new HashMap<>();
