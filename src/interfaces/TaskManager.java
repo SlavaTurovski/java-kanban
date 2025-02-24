@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface TaskManager {
 
-    void addTask(Task task);
+    int addTask(Task task);
 
-    void addEpic(Epic epic);
+    int addEpic(Epic epic);
 
-    void addSubtask(Subtask subtask);
+    int addSubtask(Subtask subtask);
 
     List<Task> getAllTasks();
 
@@ -30,7 +30,7 @@ public interface TaskManager {
 
     void updateEpic(Epic epic);
 
-    void updateSubtask(Subtask subtask);
+    int updateSubtask(Subtask subtask);
 
     void deleteTaskById(int id);
 
