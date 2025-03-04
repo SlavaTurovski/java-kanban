@@ -23,23 +23,25 @@ public class CSVTaskFormat {
     public static Task fromString(String value) {
 
         String[] values = value.split(",");
-        int id = Integer.parseInt(values[0]);
-        TaskType taskType = TaskType.valueOf(values[1]);
-        Status taskState = Status.valueOf(values[3]);
+        final Integer id = Integer.parseInt(values[0]);
+        final TaskType taskType = TaskType.valueOf(values[1]);
+        final String name = values[2];
+        final Status taskState = Status.valueOf(values[3]);
+        final String description = values[4];
 
         if (taskType == TaskType.TASK) {
-            Task result = new Task(values[2], values[4], taskState);
+            Task result = new Task(name, description, taskState);
             result.setId(id);
             return result;
 
         } else if (taskType == TaskType.EPIC) {
-            Epic result = new Epic(values[2], values[4], taskState);
+            Epic result = new Epic(name, description, taskState);
             result.setId(id);
             return result;
 
         } else if (taskType == TaskType.SUBTASK) {
             final int epicId = Integer.parseInt(values[5]);
-            Subtask result = new Subtask(values[2], values[4], taskState, epicId);
+            Subtask result = new Subtask(name, description, taskState, epicId);
             result.setId(id);
             return result;
 

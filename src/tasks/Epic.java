@@ -17,6 +17,10 @@ public class Epic extends Task {
         return subtaskId;
     }
 
+    public TaskType getTaskType() {
+        return TaskType.EPIC;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -40,10 +44,6 @@ public class Epic extends Task {
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 '}';
-    }
-
-    public TaskType getTaskType() {
-        return TaskType.EPIC;
     }
 
 }
