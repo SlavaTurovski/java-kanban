@@ -37,17 +37,10 @@ public class CSVTaskFormat {
         final String name = values[2];
         final Status status = Status.valueOf(values[3]);
         final String description = values[4];
-        //final Duration duration = Duration.ofMinutes(Long.parseLong(values[5]));
-        //final LocalDateTime startTime = LocalDateTime.parse(values[6], DATE_TIME);
-
         final Duration duration = values[5].equals(" ") ?
                 null : Duration.ofMinutes(Long.parseLong(values[5]));
-
         final LocalDateTime startTime = values[6].equals(" ") ?
                 null : LocalDateTime.parse(values[6], DATE_TIME);
-
-
-
 
         if (taskType == TaskType.TASK) {
             Task result = new Task(name, description, status, duration, startTime);
@@ -55,13 +48,14 @@ public class CSVTaskFormat {
             return result;
 
         } else if (taskType == TaskType.EPIC) {
-                Epic result = new Epic(name, description, status);
+            Epic result = new Epic(name, description, status);
             result.setId(id);
+            result.getEndTime();
             return result;
 
         } else if (taskType == TaskType.SUBTASK) {
             final int epicId = Integer.parseInt(values[7]);
-            Subtask result = new Subtask(name, description, status, epicId);
+            Subtask result = new Subtask(name, description, status, duration, startTime, epicId);
             result.setId(id);
             return result;
 

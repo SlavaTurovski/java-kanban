@@ -1,11 +1,9 @@
 package tasks;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class Epic extends Task {
 
@@ -27,29 +25,6 @@ public class Epic extends Task {
 
     public TaskType getTaskType() {
         return TaskType.EPIC;
-    }
-
-    public void addSubTask(Subtask subTask) {
-        subTasksList.add(subTask);
-        startTime = getSubTasksList().stream()
-                .map(Subtask::getStartTime)
-                .filter(Objects::nonNull)
-                .min(LocalDateTime::compareTo)
-                .orElse(null);
-        duration = Optional.ofNullable(duration)
-                .orElse(Duration.ZERO).plus(subTask.duration != null ? subTask.duration : Duration.ZERO);
-    }
-
-    public void deleteSubTask(Subtask subTask) {
-        subTasksList.remove(subTask);
-        startTime = getSubTasksList().stream()
-                .map(Subtask::getStartTime)
-                .filter(Objects::nonNull)
-                .min(LocalDateTime::compareTo)
-                .orElse(null);
-        duration = Optional.ofNullable(duration)
-                .map(d -> d.minus(subTask.duration != null ? subTask.duration : Duration.ZERO))
-                .orElse(Duration.ZERO);
     }
 
     @Override

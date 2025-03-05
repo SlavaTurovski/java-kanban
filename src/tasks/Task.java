@@ -13,6 +13,13 @@ public class Task {
     protected Duration duration;
     protected LocalDateTime startTime;
 
+    public Task(Integer id, String name, String description, Status status) {
+        this.id = id;
+        this.name = name;
+        this.status = status;
+        this.description = description;
+    }
+
     public Task(String name, String description, Status status) {
         this.name = name;
         this.status = status;
@@ -35,16 +42,8 @@ public class Task {
         return duration;
     }
 
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
-
     public LocalDateTime getStartTime() {
         return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
     }
 
     public Integer getId() {

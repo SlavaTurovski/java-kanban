@@ -11,11 +11,11 @@ public interface TaskManager {
 
     Set<Task> getPrioritizedTasks();
 
-    int addTask(Task task);
+    void addTask(Task task);
 
-    int addEpic(Epic epic);
+    void addEpic(Epic epic);
 
-    int addSubtask(Subtask subtask);
+    void addSubtask(Subtask subtask);
 
     List<Task> getAllTasks();
 
@@ -33,7 +33,7 @@ public interface TaskManager {
 
     void updateEpic(Epic epic);
 
-    int updateSubtask(Subtask subtask);
+    void updateSubtask(Subtask subtask);
 
     void deleteTaskById(int id);
 
