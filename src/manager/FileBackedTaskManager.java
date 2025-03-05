@@ -4,6 +4,8 @@ import tasks.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -72,7 +74,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8);
              BufferedWriter writer = new BufferedWriter(fileWriter)) {
 
-            writer.write("id,type,name,status,description,epic_id");
+            writer.write("id,type,name,status,description,duration,startTime,epic_id");
             writer.newLine();
 
             for (Task task : getAllTasks()) {
@@ -176,9 +178,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         File file = new File("task.csv");
         FileBackedTaskManager fileBackedTaskManager1 = FileBackedTaskManager.loadFromFile(file);
 
-        Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
-        Task task2 = new Task("Задача-2", "Описание задачи-2", Status.NEW);
-        Task task3 = new Task("Задача-3", "Описание задачи-3", Status.NEW);
+        Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW, Duration.ofMinutes(20), LocalDateTime.now());
+        Task task2 = new Task("Задача-2", "Описание задачи-2", Status.NEW, Duration.ofMinutes(30), LocalDateTime.now());
+        Task task3 = new Task("Задача-3", "Описание задачи-3", Status.NEW, Duration.ofMinutes(40), LocalDateTime.now());
         fileBackedTaskManager1.addTask(task1);
         fileBackedTaskManager1.addTask(task2);
         fileBackedTaskManager1.addTask(task3);

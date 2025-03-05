@@ -16,8 +16,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     private final HistoryManager historyManager;
 
+    final Set<Task> prioritizedTasks;
+
     public InMemoryTaskManager() {
         this.historyManager = new InMemoryHistoryManager();
+        prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
     }
 
     private int generateId() {
@@ -50,6 +53,11 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (!isDone && !isNew) {
             epics.get(epicId).setStatus(Status.IN_PROGRESS);
         }
+    }
+
+    @Override
+    public Set<Task> getPrioritizedTasks() {
+        return prioritizedTasks;
     }
 
     @Override
