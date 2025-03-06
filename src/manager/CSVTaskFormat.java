@@ -18,9 +18,10 @@ public class CSVTaskFormat {
                 .append(task.getName()).append(",")
                 .append(task.getStatus()).append(",")
                 .append(task.getDescription()).append(",")
-                .append(task.getDuration() != null ? task.getDuration().toMinutes() : " ").append(",")
-                .append(task.getStartTime() != null ? task.getStartTime().format(DATE_TIME) : " ").append(",");
-
+                .append(task.getDuration() != null ?
+                        task.getDuration().toMinutes() : "null").append(",")
+                .append(task.getStartTime() != null ?
+                        task.getStartTime().format(DATE_TIME) : "null").append(",");
 
         return result.toString();
     }
@@ -37,8 +38,8 @@ public class CSVTaskFormat {
         final String name = values[2];
         final Status status = Status.valueOf(values[3]);
         final String description = values[4];
-        final Duration duration = values[5].equals(" ") ? null : Duration.ofMinutes(Long.parseLong(values[5]));
-        final LocalDateTime startTime = values[6].equals(" ") ? null : LocalDateTime.parse(values[6], DATE_TIME);
+        final Duration duration = values[5].equals("null") ? null : Duration.ofMinutes(Long.parseLong(values[5]));
+        final LocalDateTime startTime = values[6].equals("null") ? null : LocalDateTime.parse(values[6], DATE_TIME);
 
         if (taskType == TaskType.TASK) {
             Task result = new Task(name, description, status, duration, startTime);
@@ -61,6 +62,7 @@ public class CSVTaskFormat {
         } else {
             return null;
         }
+
     }
 
 }

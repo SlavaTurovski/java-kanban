@@ -40,6 +40,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
                 Task task = CSVTaskFormat.fromString(line);
 
+                assert task != null;
                 if (task.getId() > manager.id) {
                     manager.id = task.getId() + 1;
                 }
@@ -55,12 +56,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         manager.tasks.put(task.getId(), task);
                         break;
                 }
+
             }
 
-            for (Subtask subtask : manager.subtasks.values()) {
-                Epic epic = manager.epics.get(subtask.getEpicId());
-                epic.getSubtaskIdInEpic().add(subtask.getId());
-            }
+            manager.subtasks.values().stream()
+                    .forEach(subtask -> {
+                        Epic epic = manager.epics.get(subtask.getEpicId());
+                        epic.getSubtaskIdInEpic().add(subtask.getId());
+                    });
+
 
         } catch (IOException e) {
             throw new ManagerSaveException("Произошла ошибка загрузки из файла!" + e.getMessage());
@@ -71,30 +75,50 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     protected void save() {
+
         try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8);
              BufferedWriter writer = new BufferedWriter(fileWriter)) {
-
             writer.write("id,type,name,status,description,duration,startTime,epic_id");
             writer.newLine();
 
-            for (Task task : getAllTasks()) {
-                writer.write(CSVTaskFormat.toString(task));
-                writer.newLine();
-            }
+            getAllTasks().stream()
+                    .map(CSVTaskFormat::toString)
+                    .forEach(line -> {
+                        try {
+                            writer.write(line);
+                            writer.newLine();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
 
-            for (Epic epic : getAllEpics()) {
-                writer.write(CSVTaskFormat.toString(epic));
-                writer.newLine();
-            }
+            getAllEpics().stream()
+                    .map(CSVTaskFormat::toString)
+                    .forEach(line -> {
+                        try {
+                            writer.write(line);
+                            writer.newLine();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
 
-            for (Subtask subtask : getAllSubtasks()) {
-                writer.write(CSVTaskFormat.toString(subtask));
-                writer.newLine();
-            }
+            getAllSubtasks().stream()
+                    .map(CSVTaskFormat::toString)
+                    .forEach(line -> {
+                        try {
+                            writer.write(line);
+                            writer.newLine();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
+
 
         } catch (IOException e) {
             throw new ManagerSaveException("Произошла ошибка сохранения!" + e.getMessage());
         }
+
     }
 
     @Override
@@ -200,18 +224,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         System.out.println(fileBackedTaskManager1.getAllSubtasks());
         System.out.println();
         System.out.println(fileBackedTaskManager1.getPrioritizedTasks());
-
-        /*FileBackedTaskManager fileBackedTaskManager2 = FileBackedTaskManager.loadFromFile(file);
-
-        Epic epic3 = new Epic("Эпик-3", "Описание эпика-3", Status.NEW);
-        Epic epic4 = new Epic("Эпик-4", "Описание эпика-4", Status.NEW);
-        fileBackedTaskManager2.addEpic(epic3);
-        fileBackedTaskManager2.addEpic(epic4);
-
-        Subtask subtask4 = new Subtask("Подзадача-4", "Описание подзадачи-4", Status.NEW, epic3.getId());
-        Subtask subtask6 = new Subtask("Подзадача-6", "Описание подзадачи-6", Status.NEW, epic4.getId());
-        fileBackedTaskManager2.addSubtask(subtask4);
-        fileBackedTaskManager2.addSubtask(subtask6);*/
 
     }
 }
