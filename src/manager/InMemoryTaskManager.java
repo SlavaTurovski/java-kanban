@@ -112,7 +112,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void addTask(Task task) {
         if (validateTime(task)) {
-            throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
+            throw new TaskTimeOverlapException("Время выполнения задачи пересекается с существующими задачами!");
         }
 
         task.setId(generateId());
@@ -137,7 +137,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         if (validateTime(subtask)) {
-            throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
+            throw new TaskTimeOverlapException("Время выполнения подзадачи пересекается с существующими подзадачами!");
         }
 
         subtask.setId(generateId());
@@ -215,7 +215,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
             if (validateTime(task)) {
-                throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
+                throw new TaskTimeOverlapException("Время выполнения задачи пересекается с существующими задачами!");
             }
 
             tasks.put(task.getId(), task);
@@ -244,7 +244,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(subtask.getId())) {
 
             if (validateTime(subtask)) {
-                throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
+                throw new TaskTimeOverlapException("Время выполнения подзадачи пересекается с существующими подзадачами!");
             }
 
             subtasks.put(subtask.getId(), subtask);
