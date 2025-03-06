@@ -4,6 +4,8 @@ import interfaces.HistoryManager;
 import interfaces.TaskManager;
 import tasks.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -68,6 +70,31 @@ public class InMemoryTaskManager implements TaskManager {
                 newTask.getEndTime().isAfter(exictingTask.getStartTime());
     }
 
+    private void updateTimeForEpic(Epic epic) {
+        LocalDateTime startTime = LocalDateTime.MAX;
+        LocalDateTime endTime = LocalDateTime.MIN;
+        Duration totalDuration = Duration.ofMinutes(0);
+        if (!epic.getSubtaskIdInEpic().isEmpty()) {
+            for (Integer id : epic.getSubtaskIdInEpic()) {
+                Subtask subtask = getSubtaskById(id);
+                totalDuration = totalDuration.plus(subtask.getDuration());
+                if (subtask.getStartTime().isBefore(startTime)) {
+                    startTime = subtask.getStartTime();
+                }
+                if (subtask.getEndTime().isAfter(endTime)) {
+                    endTime = subtask.getEndTime();
+                }
+            }
+            epic.setStartTime(startTime);
+            epic.setDuration(totalDuration);
+            epic.setEndTime(endTime);
+        } else {
+            epic.setStartTime(null);
+            epic.setDuration(null);
+            epic.setEndTime(null);
+        }
+    }
+
     @Override
     public Set<Task> getPrioritizedTasks() {
         return prioritizedTasks;
@@ -108,6 +135,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.getSubtaskIdInEpic().add(subtask.getId());
         updateEpic(epic);
         addPrioritizedTask(subtask);
+        updateTimeForEpic(epic);
     }
 
     @Override
@@ -183,6 +211,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epics.containsKey(epic.getId())) {
             epics.put(epic.getId(), epic);
             updateStatusEpic(epic.getId());
+            updateTimeForEpic(epic);
         } else {
             System.out.println("Эпик не найден!");
         }
@@ -199,6 +228,7 @@ public class InMemoryTaskManager implements TaskManager {
             addPrioritizedTask(subtask);
             Epic epic = epics.get(subtask.getEpicId());
             updateStatusEpic(epic.getId());
+            updateTimeForEpic(epic);
         } else {
             System.out.println("Подзадача не найдена!");
         }
@@ -240,6 +270,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Epic epic : epics.values()) {
             epic.getSubtaskIdInEpic().clear();
             updateStatusEpic(epic.getId());
+            updateTimeForEpic(epic);
         }
 
         subtasks.clear();
@@ -282,6 +313,7 @@ public class InMemoryTaskManager implements TaskManager {
         historyManager.remove(id);
         epic.getSubtaskIdInEpic().remove(subtask.getId());
         updateStatusEpic(epic.getId());
+        updateTimeForEpic(epic);
         subtasks.remove(id);
         prioritizedTasks.remove(subtask);
     }

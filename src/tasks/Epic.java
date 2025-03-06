@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Epic extends Task {
 
     protected List<Integer> subtaskId;
-    private final ArrayList<Subtask> subTasksList = new ArrayList<>();
+    private LocalDateTime endTime;
 
     public Epic(String name, String description, Status status) {
         super(name, description, status);
@@ -19,20 +19,17 @@ public class Epic extends Task {
         return subtaskId;
     }
 
-    public ArrayList<Subtask> getSubTasksList() {
-        return subTasksList;
-    }
-
     public TaskType getTaskType() {
         return TaskType.EPIC;
     }
 
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
     @Override
     public LocalDateTime getEndTime() {
-        return getSubTasksList().stream()
-                .map(Subtask::getStartTime)
-                .max(LocalDateTime::compareTo)
-                .orElse(null);
+        return endTime;
     }
 
     @Override

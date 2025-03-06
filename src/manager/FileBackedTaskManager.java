@@ -186,10 +186,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         fileBackedTaskManager1.addEpic(epic1);
         fileBackedTaskManager1.addEpic(epic2);
 
-        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(40), LocalDateTime.now().minusDays(12), epic1.getId());
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(25), LocalDateTime.now().minusDays(12), epic1.getId());
         Subtask subtask2 = new Subtask("Подзадача-2", "Описание подзадачи-2", Status.NEW, Duration.ofMinutes(40), LocalDateTime.now().minusDays(10), epic2.getId());
+        Subtask subtask3 = new Subtask("Подзадача-3", "Описание подзадачи-3", Status.NEW, Duration.ofMinutes(10), LocalDateTime.now().minusDays(9), epic2.getId());
         fileBackedTaskManager1.addSubtask(subtask1);
         fileBackedTaskManager1.addSubtask(subtask2);
+        fileBackedTaskManager1.addSubtask(subtask3);
 
         System.out.println(fileBackedTaskManager1.getAllTasks());
         System.out.println();
