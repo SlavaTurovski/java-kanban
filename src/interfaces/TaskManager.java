@@ -5,14 +5,17 @@ import tasks.Subtask;
 import tasks.Task;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
 
-    int addTask(Task task);
+    Set<Task> getPrioritizedTasks();
 
-    int addEpic(Epic epic);
+    Task addTask(Task task);
 
-    int addSubtask(Subtask subtask);
+    Epic addEpic(Epic epic);
+
+    Subtask addSubtask(Subtask subtask);
 
     List<Task> getAllTasks();
 
@@ -26,11 +29,11 @@ public interface TaskManager {
 
     Subtask getSubtaskById(int id);
 
-    void updateTask(Task task);
+    Task updateTask(Task task);
 
-    void updateEpic(Epic epic);
+    Epic updateEpic(Epic epic);
 
-    int updateSubtask(Subtask subtask);
+    Subtask updateSubtask(Subtask subtask);
 
     void deleteTaskById(int id);
 
