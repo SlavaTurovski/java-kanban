@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SubtaskTest {
@@ -31,7 +34,7 @@ class SubtaskTest {
     public void notEquals_returnTrue_IfAddSubtaskAsItsOwnEpic() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
-        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, epic1.getId());
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
         taskManager.addSubtask(subtask1);
         subtask1.setId(subtask1.getId());
         assertNotEquals(subtask1.getId(), subtask1.getEpicId(), "Подзадача не должна стать своим же эпиком");
@@ -42,7 +45,7 @@ class SubtaskTest {
     public void falseAndNull_returnTrue_IfDeletedSubTaskNoContainsOldId() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
-        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, epic1.getId());
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
         taskManager.addSubtask(subtask1);
         taskManager.deleteSubtaskById(subtask1.getId());
         assertFalse(epic1.getSubtaskIdInEpic().contains(subtask1.getId()));

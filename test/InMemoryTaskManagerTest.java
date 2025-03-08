@@ -7,6 +7,9 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
@@ -40,7 +43,7 @@ class InMemoryTaskManagerTest {
     public void equals_returnTrue_IfInMemoryTaskManagerReallyAddsSubTask() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
-        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, epic1.getId());
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
         taskManager.addSubtask(subtask1);
         Subtask subtaskActual = taskManager.getSubtaskById(subtask1.getId());
         assertEquals(subtask1, subtaskActual, "Подзадача должна добавляться");

@@ -82,26 +82,29 @@ public class InMemoryTaskManager implements TaskManager {
 
     private void updateTimeForEpic(Epic epic) {
 
+        final LocalDateTime[] startTime = {LocalDateTime.MAX};
+        final LocalDateTime[] endTime = {LocalDateTime.MIN};
+        final Duration[] totalDuration = {Duration.ofMinutes(0)};
+
         if (!epic.getSubtaskIdInEpic().isEmpty()) {
-            LocalDateTime startTime = LocalDateTime.MAX;
-            LocalDateTime endTime = LocalDateTime.MIN;
-            Duration totalDuration = Duration.ofMinutes(0);
 
-            for (Subtask subtask : epic.getSubtaskIdInEpic().stream().map(this::getSubtaskById).toList()) {
-                totalDuration = totalDuration.plus(subtask.getDuration());
+            epic.getSubtaskIdInEpic().stream()
+                    .map(this::getSubtaskById)
+                    .forEach(subtask -> {
+                        totalDuration[0] = totalDuration[0].plus(subtask.getDuration());
 
-                if (subtask.getStartTime().isBefore(startTime)) {
-                    startTime = subtask.getStartTime();
-                }
+                        if (subtask.getStartTime().isBefore(startTime[0])) {
+                            startTime[0] = subtask.getStartTime();
+                        }
 
-                if (subtask.getEndTime().isAfter(endTime)) {
-                    endTime = subtask.getEndTime();
-                }
-            }
+                        if (subtask.getEndTime().isAfter(endTime[0])) {
+                            endTime[0] = subtask.getEndTime();
+                        }
+                    });
 
-            epic.setStartTime(startTime);
-            epic.setDuration(totalDuration);
-            epic.setEndTime(endTime);
+            epic.setStartTime(startTime[0]);
+            epic.setDuration(totalDuration[0]);
+            epic.setEndTime(endTime[0]);
 
         } else {
             epic.setStartTime(null);
@@ -117,22 +120,27 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addTask(Task task) {
+    public int addTask(Task task) {
+        int taskId = generateId();
+        task.setId(taskId);
         validateTime(task);
         task.setId(generateId());
         tasks.put(task.getId(), task);
         addPrioritizedTask(task);
+        return taskId;
     }
 
     @Override
-    public void addEpic(Epic epic) {
-        epic.setId(generateId());
+    public int addEpic(Epic epic) {
+        int epicId = generateId();
+        epic.setId(epicId);
         epics.put(epic.getId(), epic);
         updateStatusEpic(epic.getId());
+        return epicId;
     }
 
     @Override
-    public void addSubtask(Subtask subtask) {
+    public int addSubtask(Subtask subtask) {
 
         Epic epic = epics.get(subtask.getEpicId());
 
@@ -141,12 +149,14 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         validateTime(subtask);
-        subtask.setId(generateId());
+        int subtaskId = generateId();
+        subtask.setId(subtaskId);
         subtasks.put(subtask.getId(), subtask);
         epic.getSubtaskIdInEpic().add(subtask.getId());
         updateEpic(epic);
         addPrioritizedTask(subtask);
         updateTimeForEpic(epic);
+        return subtaskId;
     }
 
     @Override

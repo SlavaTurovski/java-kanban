@@ -11,7 +11,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private final File file;
 
-    private FileBackedTaskManager(File file) {
+    public FileBackedTaskManager(File file) {
         this.file = file;
         if (!file.exists()) {
             try {
@@ -122,9 +122,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addTask(Task task) {
+    public int addTask(Task task) {
         super.addTask(task);
         save();
+        return id;
     }
 
     @Override
@@ -146,9 +147,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addEpic(Epic epic) {
+    public int addEpic(Epic epic) {
         super.addEpic(epic);
         save();
+        return id;
     }
 
     @Override
@@ -170,9 +172,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask subtask) {
+    public int addSubtask(Subtask subtask) {
         super.addSubtask(subtask);
         save();
+        return id;
     }
 
     @Override
