@@ -88,7 +88,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             writer.write(line);
                             writer.newLine();
                         } catch (IOException e) {
-                            throw new UncheckedIOException(e);
+                            throw new ManagerSaveException("Произошла ошибка сохранения задачи!" + e.getMessage());
                         }
                     });
 
@@ -99,7 +99,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             writer.write(line);
                             writer.newLine();
                         } catch (IOException e) {
-                            throw new UncheckedIOException(e);
+                            throw new ManagerSaveException("Произошла ошибка сохранения эпика!" + e.getMessage());
                         }
                     });
 
@@ -110,7 +110,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             writer.write(line);
                             writer.newLine();
                         } catch (IOException e) {
-                            throw new UncheckedIOException(e);
+                            throw new ManagerSaveException("Произошла ошибка сохранения подзадачи!" + e.getMessage());
                         }
                     });
 
