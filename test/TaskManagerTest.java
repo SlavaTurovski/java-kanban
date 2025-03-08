@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public abstract class TaskManagerTest<T extends TaskManager> {
+public class TaskManagerTest<T extends TaskManager> {
 
     private final InMemoryTaskManager taskManager;
 
@@ -33,33 +33,33 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertNull(taskManager.getTaskById(task2.getId()));
     }
 
-    //Проверка того что задача создается
+    //6-Проверка того что InMemoryTaskManager действительно добавляет задачи типа - TASK
     @Test
-    public void equals_returnTrue_IfAddingTasksIsWell() {
+    public void equals_returnTrue_IfInMemoryTaskManagerReallyAddsTask() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         taskManager.addTask(task1);
-        assertEquals(1, taskManager.getAllTasks().size());
-        assertEquals(task1, taskManager.getAllTasks().getFirst());
+        Task taskActual = taskManager.getTaskById(task1.getId());
+        assertEquals(task1, taskActual, "Задача должна добавляться");
     }
 
-    //Проверка того что эпик создается
+    //6-Проверка того что InMemoryTaskManager действительно добавляет задачи типа - EPIC
     @Test
-    void equals_returnTrue_IfAddingEpicIsWell() {
+    public void equals_returnTrue_IfInMemoryTaskManagerReallyAddsEpic() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
-        assertEquals(1, taskManager.getAllEpics().size());
-        assertEquals(epic1, taskManager.getAllEpics().getFirst());
+        Epic epicActual = taskManager.getEpicById(epic1.getId());
+        assertEquals(epic1, epicActual, "Эпик должен добавляться");
     }
 
-    //Проверка того что подзадача создается
+    //6-Проверка того что InMemoryTaskManager действительно добавляет задачи типа - SUBTASK
     @Test
-    public void equals_returnTrue_IfAddingSubTasksIsWell() {
+    public void equals_returnTrue_IfInMemoryTaskManagerReallyAddsSubTask() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
-        Subtask subTask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(10), LocalDateTime.now().minusDays(9), epic1.getId());
-        taskManager.addSubtask(subTask1);
-        assertEquals(1, taskManager.getAllSubtasks().size());
-        assertEquals(subTask1, taskManager.getAllSubtasks().getFirst());
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
+        taskManager.addSubtask(subtask1);
+        Subtask subtaskActual = taskManager.getSubtaskById(subtask1.getId());
+        assertEquals(subtask1, subtaskActual, "Подзадача должна добавляться");
     }
 
     //Проверка того что задачу можно получить по id
