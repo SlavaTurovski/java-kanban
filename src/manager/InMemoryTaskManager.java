@@ -150,11 +150,12 @@ public class InMemoryTaskManager implements TaskManager {
         validateTime(subtask);
         int subtaskId = generateId();
         subtask.setId(subtaskId);
-        subtasks.put(subtask.getId(), subtask);
-        epic.getSubtaskIdInEpic().add(subtask.getId());
+        subtasks.put(subtaskId, subtask);
+        epic.getSubtaskIdInEpic().add(subtaskId);
         updateEpic(epic);
         addPrioritizedTask(subtask);
         updateTimeForEpic(epic);
+
         return subtask;
     }
 

@@ -74,7 +74,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     }
 
-    protected void save() {
+    public void save() {
 
         try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8);
              BufferedWriter writer = new BufferedWriter(fileWriter)) {
@@ -199,37 +199,4 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return newSubtask;
     }
 
-    public static void main(String[] args) {
-
-        File file = new File("task.csv");
-        FileBackedTaskManager fileBackedTaskManager1 = FileBackedTaskManager.loadFromFile(file);
-
-        Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW, Duration.ofMinutes(20), LocalDateTime.now().minusDays(1));
-        Task task2 = new Task("Задача-2", "Описание задачи-2", Status.NEW, Duration.ofMinutes(30), LocalDateTime.now().minusMinutes(20));
-        Task task3 = new Task("Задача-3", "Описание задачи-3", Status.NEW, Duration.ofMinutes(40), LocalDateTime.now().minusDays(22));
-        fileBackedTaskManager1.addTask(task1);
-        fileBackedTaskManager1.addTask(task2);
-        fileBackedTaskManager1.addTask(task3);
-
-        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
-        Epic epic2 = new Epic("Эпик-2", "Описание эпика-2", Status.NEW);
-        fileBackedTaskManager1.addEpic(epic1);
-        fileBackedTaskManager1.addEpic(epic2);
-
-        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(25), LocalDateTime.now().minusDays(12), epic1.getId());
-        Subtask subtask2 = new Subtask("Подзадача-2", "Описание подзадачи-2", Status.NEW, Duration.ofMinutes(40), LocalDateTime.now().minusDays(10), epic2.getId());
-        Subtask subtask3 = new Subtask("Подзадача-3", "Описание подзадачи-3", Status.NEW, Duration.ofMinutes(10), LocalDateTime.now().minusDays(9), epic2.getId());
-        fileBackedTaskManager1.addSubtask(subtask1);
-        fileBackedTaskManager1.addSubtask(subtask2);
-        fileBackedTaskManager1.addSubtask(subtask3);
-
-        System.out.println(fileBackedTaskManager1.getAllTasks());
-        System.out.println();
-        System.out.println(fileBackedTaskManager1.getAllEpics());
-        System.out.println();
-        System.out.println(fileBackedTaskManager1.getAllSubtasks());
-        System.out.println();
-        System.out.println(fileBackedTaskManager1.getPrioritizedTasks());
-
-    }
 }

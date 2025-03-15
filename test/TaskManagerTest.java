@@ -1,8 +1,9 @@
 package test;
 
 import interfaces.TaskManager;
-import manager.InMemoryTaskManager;
+import manager.Managers;
 import manager.TaskTimeOverlapException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Status;
@@ -17,15 +18,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TaskManagerTest<T extends TaskManager> {
 
-    private final InMemoryTaskManager taskManager;
+   T taskManager;
 
-    public TaskManagerTest() {
-        this.taskManager = new InMemoryTaskManager();
+    TaskManager initTaskManager() {
+        return  Managers.getDefault();
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        taskManager = (T) initTaskManager();
     }
 
     //Проверка того что нельзя создать пересекающиеся по времени задачи
     @Test
-    public void nullAndEquals_returnTrue_shouldNotCreateOverlappingDate() {
+    public void shouldNotCreateOverlappingDate() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW, Duration.ofMinutes(20), LocalDateTime.now().minusMinutes(10));
         Task task2 = new Task("Пересекающаяся задача-2", "Описание задачи-2", Status.NEW, Duration.ofMinutes(20), LocalDateTime.now().minusMinutes(10));
         taskManager.addTask(task1);
@@ -35,7 +41,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //6-Проверка того что InMemoryTaskManager действительно добавляет задачи типа - TASK
     @Test
-    public void equals_returnTrue_IfInMemoryTaskManagerReallyAddsTask() {
+    public void addTask_InMemoryTaskManager() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         taskManager.addTask(task1);
         Task taskActual = taskManager.getTaskById(task1.getId());
@@ -44,7 +50,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //6-Проверка того что InMemoryTaskManager действительно добавляет задачи типа - EPIC
     @Test
-    public void equals_returnTrue_IfInMemoryTaskManagerReallyAddsEpic() {
+    public void addEpic_InMemoryTaskManager() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Epic epicActual = taskManager.getEpicById(epic1.getId());
@@ -53,7 +59,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //6-Проверка того что InMemoryTaskManager действительно добавляет задачи типа - SUBTASK
     @Test
-    public void equals_returnTrue_IfInMemoryTaskManagerReallyAddsSubTask() {
+    public void addSubtask_InMemoryTaskManager() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -64,7 +70,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что задачу можно получить по id
     @Test
-    public void equals_returnTrue_IfTaskGettingByIdIsWell() {
+    public void getTaskById() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         taskManager.addTask(task1);
         assertEquals(task1, taskManager.getTaskById(task1.getId()));
@@ -72,7 +78,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что эпик можно получить по id
     @Test
-    public void equals_returnTrue_IfEpicGettingByIdIsWell() {
+    public void getEpicById() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         epic1.setId(1);
         taskManager.addEpic(epic1);
@@ -81,7 +87,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что подзадачу можно получить по id
     @Test
-    public void equals_returnTrue_IfSubtasksGettingByIdIsWell() {
+    public void getSubtasksById() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subTask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(10), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -91,7 +97,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что задача обновляется
     @Test
-    public void equals_returnTrue_IfUpdateTaskIsWell() {
+    public void updateTask() {
         Task original = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         taskManager.addTask(original);
         original.setName("Обновленное название задачи");
@@ -101,7 +107,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что эпик обновляется
     @Test
-    public void equals_returnTrue_IfUpdateEpicIsWell() {
+    public void updateEpic() {
         Epic original = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(original);
         original.setName("Обновленное название эпика");
@@ -111,7 +117,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что подзадача обновляется
     @Test
-    public void equals_returnTrue_IfUpdateSubtaskIsWell() {
+    public void updateSubtask() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(10), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -122,7 +128,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что задача удаляется по id
     @Test
-    public void nullAndEquals_returnTrue_IfDeleteTaskByIdIsWell() {
+    public void deleteTaskById() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         taskManager.addTask(task1);
         taskManager.deleteTaskById(task1.getId());
@@ -132,7 +138,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что эпик удаляется по id
     @Test
-    public void nullAndEquals_returnTrue_IdDeleteEpicByIdIsWell() {
+    public void deleteEpicById() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         taskManager.deleteEpicById(epic1.getId());
@@ -142,7 +148,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что подзадача удаляется по id
     @Test
-    public void nullAndEquals_returnTrue_IfDeleteSubTaskByIdIsWell() {
+    public void deleteSubtaskById() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subTask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(10), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -154,7 +160,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что подзадачу можно получить по id эпика
     @Test
-    public void equals_returnTrue_IfSubtasksGettingByEpicIdIsWell() {
+    public void getSubtasksByEpicId() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subTask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -165,6 +171,79 @@ public class TaskManagerTest<T extends TaskManager> {
         subTasks.add(subTask1);
         subTasks.add(subTask2);
         assertEquals(subTasks, taskManager.getSubtasksByEpicId(epic1.getId()));
+    }
+
+
+
+
+
+    //7-Проверка того что задачи с заданным id и сгенерированным id не конфликтуют внутри менеджера
+    @Test
+    public void equals_returnTrue_IfTasksWithGivenIdAndGeneratedIdNotConflict() {
+        Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
+        taskManager.addTask(task1);
+        Task task2 = new Task("Задача-2", "Описание задачи-2", Status.NEW);
+        taskManager.addTask(task2);
+        task2.setId(1);
+        taskManager.addTask(task2);
+        assertNotEquals(task1.getId(), task2.getId(), "Задачи с заданным id и сгенерированным id не должны " +
+                "конфликтовать");
+    }
+
+    //4-Проверка того что объект Subtask нельзя сделать своим же эпиком
+    @Test
+    public void notEquals_returnTrue_IfAddSubtaskAsItsOwnEpic() {
+        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
+        taskManager.addSubtask(subtask1);
+        subtask1.setId(subtask1.getId());
+        assertNotEquals(subtask1.getId(), subtask1.getEpicId(), "Подзадача не должна стать своим же эпиком");
+    }
+
+    //ТЗ-6 Проверка того что удаляемые подзадачи не должны хранить внутри себя старые id
+    @Test
+    public void falseAndNull_returnTrue_IfDeletedSubTaskNoContainsOldId() {
+        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
+        taskManager.addSubtask(subtask1);
+        taskManager.deleteSubtaskById(subtask1.getId());
+        assertFalse(epic1.getSubtaskIdInEpic().contains(subtask1.getId()));
+        assertNull(taskManager.getSubtaskById(subtask1.getId()), "Подзадачи не должны хранить внутри себя старые id");
+    }
+
+    //3-Проверка того что объект Epic нельзя добавить в самого себя в виде подзадачи
+    @Test
+    public void false_returnTrue_IfAddEpicItSelfAsSubtask() {
+        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
+        subtask1.setId(epic1.getId());
+        taskManager.addSubtask(subtask1);
+        assertFalse(epic1.getSubtaskIdInEpic().isEmpty(), "Объект эпика не должен добавлять себя в виде подзадачи");
+    }
+
+    // ТЗ-6 Проверка того что внутри эпиков не должно оставаться неактуальных id подзадач
+    @Test
+    public void false_returnTrue_IfEpicNoContainsDeletedSubtasks() {
+        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
+        taskManager.addSubtask(subtask1);
+        taskManager.deleteSubtaskById(subtask1.getId());
+        assertFalse(epic1.getSubtaskIdInEpic().contains(subtask1.getId()), "Внутри эпиков не должно оставаться неактуальных id подзадач");
+    }
+
+    //8-Проверка того что задача неизменна (по всем полям) при добавлении задачи в менеджер
+    @Test
+    public void equals_returnTrue_IfAddTaskToTheManager() {
+        Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
+        taskManager.addTask(task1);
+        assertEquals(task1.getName(), taskManager.getTaskById(task1.getId()).getName(), "Поле должно быть неизменно");
+        assertEquals(task1.getDescription(), taskManager.getTaskById(task1.getId()).getDescription(), "Поле должно " +
+                "быть неизменно");
+        assertEquals(task1.getStatus(), taskManager.getTaskById(task1.getId()).getStatus(), "Поле должно быть неизменно");
     }
 
 }

@@ -37,7 +37,7 @@ class InMemoryHistoryManagerTest {
 
     //9-Проверка того что задачи, добавляемые в HistoryManager, сохраняют предыдущую версию задачи и её данных
     @Test
-    public void equals_returnTrue_IfHistoryManagerSaveAllVersionsOfTasks() {
+    public void add_() {
         historyManager.add(task1);
         taskManager.updateTask(updatedTask);
         historyManager.add(updatedTask);
@@ -89,7 +89,7 @@ class InMemoryHistoryManagerTest {
 
     //ТЗ-6 Проверка удаления задач из начала списка
     @Test
-    public void equals_returnTrue_IfTasksCorrectlyRemoveFromBeginningList() {
+    public void delete_deleteFromStarList() {
         List<Task> historyTask = new ArrayList<>();
         historyTask.add(task2);
         historyTask.add(task3);
@@ -102,7 +102,7 @@ class InMemoryHistoryManagerTest {
 
     //ТЗ-6 Проверка удаления задач из середины списка
     @Test
-    public void equals_returnTrue_IfTasksCorrectlyRemoveFromMidList() {
+    public void delete_deleteFromMidList() {
         List<Task> historyTask = new ArrayList<>();
         historyTask.add(task1);
         historyTask.add(task3);
@@ -115,7 +115,7 @@ class InMemoryHistoryManagerTest {
 
     //ТЗ-6 Проверка удаления задач с конца списка
     @Test
-    public void equals_returnTrue_IfTasksCorrectlyRemovedFromEndList() {
+    public void delete_deleteFromEndList() {
         List<Task> historyTask = new ArrayList<>();
         historyTask.add(task1);
         historyTask.add(task2);

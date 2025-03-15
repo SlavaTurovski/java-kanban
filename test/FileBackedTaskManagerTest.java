@@ -1,70 +1,83 @@
 package test;
 
+import interfaces.TaskManager;
 import manager.FileBackedTaskManager;
-import manager.InMemoryTaskManager;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Status;
+import tasks.Subtask;
 import tasks.Task;
 
 import java.io.File;
+import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
-    private static File tempFile;
-    private InMemoryTaskManager taskManager;
-
-    @BeforeEach
-    public void setUp() {
-        tempFile = new File("task.csv");
-        taskManager = FileBackedTaskManager.loadFromFile(tempFile);
-    }
-
-    @AfterEach
-    public void afterEach() {
-        taskManager.deleteAllTasks();
-        taskManager.deleteAllSubtasks();
-        taskManager.deleteAllEpics();
-    }
-
-    //Проверка того что задачи загружаются из файла
     @Test
-    public void equals_returnTrue_IfLoadFromFile() {
-        taskManager = FileBackedTaskManager.loadFromFile(tempFile);
-        assertEquals(0, taskManager.getAllTasks().size());
-        assertEquals(0, taskManager.getAllEpics().size());
-        assertEquals(0, taskManager.getAllSubtasks().size());
+    void loadFromFile_saveToEmptyFile() throws IOException {
+        File file = File.createTempFile("tempFile", ".csv");
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
+        taskManager.save();
+        FileBackedTaskManager taskManagerFromFile = FileBackedTaskManager.loadFromFile(file);
+        assertNotNull(taskManagerFromFile, "taskManagerFromFile is null!");
+        assertEquals(taskManagerFromFile.getAllTasks().size(), 0, "Количество задач не равно 0");
+        assertEquals(taskManagerFromFile.getHistory().size(), 0, "Количество задач в истории не равно 0");
     }
 
-    //Проверка того что задачи записываются в файл
     @Test
-    public void equals_returnTrue_IfSaveFromData() {
-        taskManager.addEpic(new Epic("Эпик-1", "Описание эпика-1", Status.NEW));
-        assertEquals(1, taskManager.getAllEpics().size());
-        taskManager = FileBackedTaskManager.loadFromFile(tempFile);
-        assertEquals(1, taskManager.getAllEpics().size());
-        taskManager.deleteAllEpics();
-        assertEquals(0, taskManager.getAllEpics().size(), "Эпики должны быть удалены!");
-        taskManager = FileBackedTaskManager.loadFromFile(tempFile);
-        assertEquals(0, taskManager.getAllEpics().size());
+    void loadFromFile_loadFromEmptyFile() throws IOException {
+        File file = File.createTempFile("tempFile", ".csv");
+        FileBackedTaskManager taskManager = FileBackedTaskManager.loadFromFile(file);
+        assertNotNull(taskManager, "taskManager is null!");
+        assertEquals(taskManager.getAllTasks().size(), 0, "Количество задач не равно 0");
+        assertEquals(taskManager.getHistory().size(), 0, "Количество задач в истории не равно 0");
     }
 
-    //Проверка того что 50 задач записываются в файл и загружаются из него
     @Test
-    public void equals_returnTrue_IfSaveAndLoadBigData() {
-        for (int i = 0; i < 50; i++) {
-            taskManager.addEpic(new Epic("Эпик-" + i, "Описание эпика-1", Status.NEW));
-            taskManager.addTask(new Task("Задача-" + i, "Описание задачи-1", Status.NEW));
+    public void loadFromFile_saveAndLoadData() throws IOException {
+        File file = File.createTempFile("tempFile", ".csv");
+        FileBackedTaskManager taskManager = FileBackedTaskManager.loadFromFile(file);
+
+        Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW, Duration.ofMinutes(20), LocalDateTime.now().minusDays(1));
+        Task task2 = new Task("Задача-2", "Описание задачи-2", Status.NEW, Duration.ofMinutes(30), LocalDateTime.now().minusMinutes(20));
+        Task task3 = new Task("Задача-3", "Описание задачи-3", Status.NEW, Duration.ofMinutes(40), LocalDateTime.now().minusDays(22));
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
+        taskManager.addTask(task3);
+
+        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        Epic epic2 = new Epic("Эпик-2", "Описание эпика-2", Status.NEW);
+        taskManager.addEpic(epic1);
+        taskManager.addEpic(epic2);
+
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(25), LocalDateTime.now().minusDays(12), epic1.getId());
+        Subtask subtask2 = new Subtask("Подзадача-2", "Описание подзадачи-2", Status.NEW, Duration.ofMinutes(40), LocalDateTime.now().minusDays(10), epic2.getId());
+        Subtask subtask3 = new Subtask("Подзадача-3", "Описание подзадачи-3", Status.NEW, Duration.ofMinutes(10), LocalDateTime.now().minusDays(9), epic2.getId());
+        taskManager.addSubtask(subtask1);
+        taskManager.addSubtask(subtask2);
+        taskManager.addSubtask(subtask3);
+
+        assertEquals(3, taskManager.getAllTasks().size(), "Количество задач в менеджерах не равно");
+        assertEquals(2, taskManager.getAllEpics().size(), "Количество задач в менеджерах не равно");
+        assertEquals(3, taskManager.getAllSubtasks().size(), "Количество задач в менеджерах не равно");
+        FileBackedTaskManager taskManagerFromFile = FileBackedTaskManager.loadFromFile(file);
+        assertEquals(3, taskManagerFromFile.getAllTasks().size(), "Количество задач в менеджерах не равно");
+        assertEquals(2, taskManagerFromFile.getAllEpics().size(), "Количество задач в менеджерах не равно");
+        assertEquals(3, taskManagerFromFile.getAllSubtasks().size(), "Количество задач в менеджерах не равно");
+    }
+
+    @Override
+    TaskManager initTaskManager() {
+        try {
+            File file = File.createTempFile("tempFile", ".csv");
+            return  FileBackedTaskManager.loadFromFile(file);
+        } catch (IOException ignored) {
         }
-        assertEquals(50, taskManager.getAllEpics().size());
-        assertEquals(50, taskManager.getAllTasks().size());
-        taskManager = FileBackedTaskManager.loadFromFile(tempFile);
-        assertEquals(50, taskManager.getAllEpics().size());
-        assertEquals(50, taskManager.getAllTasks().size());
+        return null;
     }
 
 }

@@ -21,7 +21,7 @@ class ManagersTest {
 
     //5-Проверка того что утилитарный класс всегда возвращает проинициализированные и готовые к работе экземпляры менеджеров
     @Test
-    public void notNullAndInstanceOf_returnTrue_IfUtilityClassReturnsInitializedManagerCopiesInMemoryTaskManager() {
+    public void taskManager_shouldBeNotNull() {
         assertNotNull(taskManager, "taskManager должен быть не null");
         assertInstanceOf(InMemoryTaskManager.class, taskManager, "taskManager должен являться экземпляром" +
                 " InMemoryTaskManager");
@@ -29,7 +29,7 @@ class ManagersTest {
 
     //5-Проверка того что утилитарный класс всегда возвращает проинициализированные и готовые к работе экземпляры менеджеров
     @Test
-    public void notNullAndInstanceOf_returnTrue_IfUtilityClassReturnsInitializedManagerCopiesInMemoryHistoryManager() {
+    public void historyManager_shouldBeNotNull() {
         assertNotNull(historyManager, "historyManager должен быть не null");
         assertInstanceOf(InMemoryHistoryManager.class, historyManager, "historyManager должен являться экземпляром" +
                 " InMemoryHistoryManager");
