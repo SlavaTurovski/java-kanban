@@ -4,8 +4,7 @@ import tasks.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.util.stream.Stream;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -78,12 +77,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8);
              BufferedWriter writer = new BufferedWriter(fileWriter)) {
+
             writer.write("id,type,name,status,description,duration,startTime,epic_id");
             writer.newLine();
 
-            getAllTasks().stream()
-                    .map(CSVTaskFormat::toString)
-                    .forEach(line -> {
+            Stream.concat(getAllTasks().stream(),
+                            Stream.concat(getAllEpics().stream(), getAllSubtasks().stream())
+                    ).map(CSVTaskFormat::toString)
+                    .forEachOrdered(line -> {
                         try {
                             writer.write(line);
                             writer.newLine();
@@ -91,29 +92,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             throw new ManagerSaveException("Произошла ошибка сохранения задачи!" + e.getMessage());
                         }
                     });
-
-            getAllEpics().stream()
-                    .map(CSVTaskFormat::toString)
-                    .forEach(line -> {
-                        try {
-                            writer.write(line);
-                            writer.newLine();
-                        } catch (IOException e) {
-                            throw new ManagerSaveException("Произошла ошибка сохранения эпика!" + e.getMessage());
-                        }
-                    });
-
-            getAllSubtasks().stream()
-                    .map(CSVTaskFormat::toString)
-                    .forEach(line -> {
-                        try {
-                            writer.write(line);
-                            writer.newLine();
-                        } catch (IOException e) {
-                            throw new ManagerSaveException("Произошла ошибка сохранения подзадачи!" + e.getMessage());
-                        }
-                    });
-
 
         } catch (IOException e) {
             throw new ManagerSaveException("Произошла ошибка сохранения!" + e.getMessage());

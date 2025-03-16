@@ -12,16 +12,16 @@ import tasks.Task;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TaskManagerTest<T extends TaskManager> {
+abstract class TaskManagerTest<T extends TaskManager> {
 
-   T taskManager;
+    T taskManager;
 
     TaskManager initTaskManager() {
-        return  Managers.getDefault();
+        return Managers.getDefault();
     }
 
     @BeforeEach
@@ -29,9 +29,77 @@ public class TaskManagerTest<T extends TaskManager> {
         taskManager = (T) initTaskManager();
     }
 
+    @Test
+    public void addSubtask_updateEpic_setStatusDoneIfAllSubtasksInStatusDone() {
+        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.DONE, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
+        taskManager.addSubtask(subtask1);
+        taskManager.updateEpic(epic1);
+        assertEquals(Status.DONE, epic1.getStatus(), "Статус эпика должен быть DONE!");
+    }
+
+    @Test
+    public void addSubtask_updateEpicStatus_setStatusInProgressIfAllSubtasksInStatusInProgress() {
+        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.IN_PROGRESS, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
+        taskManager.addSubtask(subtask1);
+        taskManager.updateEpic(epic1);
+        assertEquals(Status.IN_PROGRESS, epic1.getStatus(), "Статус эпика должен быть IN_PROGRESS!");
+    }
+
+    @Test
+    public void addSubtask_updateEpicStatus_setStatusNewIfAllSubtasksInStatusNew() {
+        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
+        taskManager.addSubtask(subtask1);
+        taskManager.updateEpic(epic1);
+        assertEquals(Status.NEW, epic1.getStatus(), "Статус эпика должен быть NEW!");
+    }
+
+    @Test
+    public void addSubtask_updateEpicTime_setStartTimeFromStartTimeOfEarliestSubtask() {
+        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.of(2019,1,1,1,1), epic1.getId());
+        taskManager.addSubtask(subtask1);
+        Subtask subtask2 = new Subtask("Подзадача-2", "Описание подзадачи-2", Status.NEW, Duration.ofMinutes(100), LocalDateTime.of(2020,1,1,1,1), epic1.getId());
+        taskManager.addSubtask(subtask2);
+        taskManager.updateEpic(epic1);
+        assertEquals(subtask1.getStartTime(), epic1.getStartTime(), "Время начала задач должно быть одинаковым!");
+    }
+
+    @Test
+    public void deleteSubtask_updateEpicStatus_setStatusNewIfSubtaskListIsEmpty() {
+        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
+        taskManager.addSubtask(subtask1);
+        taskManager.updateEpic(epic1);
+        taskManager.deleteAllSubtasks();
+        assertEquals(Status.NEW, epic1.getStatus(), "Статус эпика должен быть NEW!");
+    }
+
+    @Test
+    public void getTaskById_addTaskToHistory() {
+        Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
+        taskManager.addTask(task1);
+        Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
+        taskManager.addSubtask(subtask1);
+        taskManager.getTaskById(task1.getId());
+        taskManager.getEpicById(epic1.getId());
+        taskManager.getSubtaskById(subtask1.getId());
+        assertEquals(3, taskManager.getHistory().size(),
+                "Метод getHistory в InMemoryTaskManager работает не корректно!");
+    }
+
     //Проверка того что нельзя создать пересекающиеся по времени задачи
     @Test
-    public void shouldNotCreateOverlappingDate() {
+    public void addTask_shouldNotCreateOverlappingDate() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW, Duration.ofMinutes(20), LocalDateTime.now().minusMinutes(10));
         Task task2 = new Task("Пересекающаяся задача-2", "Описание задачи-2", Status.NEW, Duration.ofMinutes(20), LocalDateTime.now().minusMinutes(10));
         taskManager.addTask(task1);
@@ -41,7 +109,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //6-Проверка того что InMemoryTaskManager действительно добавляет задачи типа - TASK
     @Test
-    public void addTask_InMemoryTaskManager() {
+    public void addTask_setIdAndAddToMap() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         taskManager.addTask(task1);
         Task taskActual = taskManager.getTaskById(task1.getId());
@@ -50,7 +118,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //6-Проверка того что InMemoryTaskManager действительно добавляет задачи типа - EPIC
     @Test
-    public void addEpic_InMemoryTaskManager() {
+    public void addEpic_setIdAndAddToMap() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Epic epicActual = taskManager.getEpicById(epic1.getId());
@@ -59,7 +127,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //6-Проверка того что InMemoryTaskManager действительно добавляет задачи типа - SUBTASK
     @Test
-    public void addSubtask_InMemoryTaskManager() {
+    public void addSubtask_setIdAndAddToMap() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -70,7 +138,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что задачу можно получить по id
     @Test
-    public void getTaskById() {
+    public void getTaskById_returnTaskById() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         taskManager.addTask(task1);
         assertEquals(task1, taskManager.getTaskById(task1.getId()));
@@ -78,7 +146,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что эпик можно получить по id
     @Test
-    public void getEpicById() {
+    public void getEpicById_returnEpicById() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         epic1.setId(1);
         taskManager.addEpic(epic1);
@@ -87,7 +155,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что подзадачу можно получить по id
     @Test
-    public void getSubtasksById() {
+    public void getSubtasksById_returnSubtaskById() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subTask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(10), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -97,7 +165,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что задача обновляется
     @Test
-    public void updateTask() {
+    public void updateTask_changeName() {
         Task original = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         taskManager.addTask(original);
         original.setName("Обновленное название задачи");
@@ -107,7 +175,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что эпик обновляется
     @Test
-    public void updateEpic() {
+    public void updateEpic_changeName() {
         Epic original = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(original);
         original.setName("Обновленное название эпика");
@@ -117,7 +185,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что подзадача обновляется
     @Test
-    public void updateSubtask() {
+    public void updateSubtask_changeName() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(10), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -128,7 +196,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что задача удаляется по id
     @Test
-    public void deleteTaskById() {
+    public void deleteTaskById_removeFromTaskManager() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         taskManager.addTask(task1);
         taskManager.deleteTaskById(task1.getId());
@@ -138,7 +206,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что эпик удаляется по id
     @Test
-    public void deleteEpicById() {
+    public void deleteEpicById_removeFromTaskManager() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         taskManager.deleteEpicById(epic1.getId());
@@ -148,7 +216,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //Проверка того что подзадача удаляется по id
     @Test
-    public void deleteSubtaskById() {
+    public void deleteSubtaskById_removeFromTaskManager() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subTask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(10), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -158,9 +226,35 @@ public class TaskManagerTest<T extends TaskManager> {
         assertNull(taskManager.getTaskById(subTask1.getId()));
     }
 
+    @Test
+    void deleteAllTasks_removeFromTaskManager() {
+        Task task = new Task("Задача-1", "Описание задачи-1", Status.NEW, Duration.ofMinutes(20), LocalDateTime.now().minusMinutes(10));
+        taskManager.addTask(task);
+        taskManager.deleteAllTasks();
+        assertEquals(0, taskManager.getAllTasks().size(), "Задачи не удаляются!");
+    }
+
+    @Test
+    void deleteAllEpic_removeFromTaskManager() {
+        Epic epic = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addTask(epic);
+        taskManager.deleteAllTasks();
+        assertEquals(0, taskManager.getAllEpics().size(), "Эпики не удаляются!");
+    }
+
+    @Test
+    void deleteAllSubtasks_removeFromTaskManager() {
+        Epic epic = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
+        taskManager.addEpic(epic);
+        Subtask subtask = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic.getId());
+        taskManager.addSubtask(subtask);
+        taskManager.deleteAllSubtasks();
+        assertEquals(0, taskManager.getAllSubtasks().size(), "Подзадачи не удаляются!");
+    }
+
     //Проверка того что подзадачу можно получить по id эпика
     @Test
-    public void getSubtasksByEpicId() {
+    public void getSubtasksByEpicId_shouldGetSubtasksByEpicId() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subTask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -173,13 +267,9 @@ public class TaskManagerTest<T extends TaskManager> {
         assertEquals(subTasks, taskManager.getSubtasksByEpicId(epic1.getId()));
     }
 
-
-
-
-
     //7-Проверка того что задачи с заданным id и сгенерированным id не конфликтуют внутри менеджера
     @Test
-    public void equals_returnTrue_IfTasksWithGivenIdAndGeneratedIdNotConflict() {
+    public void setId_tasksWithGeneratedAndAssignedIdsDoNotConflict() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         taskManager.addTask(task1);
         Task task2 = new Task("Задача-2", "Описание задачи-2", Status.NEW);
@@ -192,7 +282,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //4-Проверка того что объект Subtask нельзя сделать своим же эпиком
     @Test
-    public void notEquals_returnTrue_IfAddSubtaskAsItsOwnEpic() {
+    public void getEpicId_subtaskCannotBeItsOwnEpic() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -203,7 +293,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //ТЗ-6 Проверка того что удаляемые подзадачи не должны хранить внутри себя старые id
     @Test
-    public void falseAndNull_returnTrue_IfDeletedSubTaskNoContainsOldId() {
+    public void deleteSubtaskById_deleteSubtaskAndCheckForOldIds() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -215,7 +305,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //3-Проверка того что объект Epic нельзя добавить в самого себя в виде подзадачи
     @Test
-    public void false_returnTrue_IfAddEpicItSelfAsSubtask() {
+    public void getSubtaskIdInEpic_epicCannotAddItselfAsSubtask() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -226,7 +316,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     // ТЗ-6 Проверка того что внутри эпиков не должно оставаться неактуальных id подзадач
     @Test
-    public void false_returnTrue_IfEpicNoContainsDeletedSubtasks() {
+    public void getSubtaskIdInEpic_epicDoesNotContainDeletedSubtaskIds() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, Duration.ofMinutes(100), LocalDateTime.now().minusDays(9), epic1.getId());
@@ -237,7 +327,7 @@ public class TaskManagerTest<T extends TaskManager> {
 
     //8-Проверка того что задача неизменна (по всем полям) при добавлении задачи в менеджер
     @Test
-    public void equals_returnTrue_IfAddTaskToTheManager() {
+    public void get_addTaskAndCheckImmutability() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         taskManager.addTask(task1);
         assertEquals(task1.getName(), taskManager.getTaskById(task1.getId()).getName(), "Поле должно быть неизменно");

@@ -37,7 +37,7 @@ class InMemoryHistoryManagerTest {
 
     //9-Проверка того что задачи, добавляемые в HistoryManager, сохраняют предыдущую версию задачи и её данных
     @Test
-    public void add_() {
+    public void getHistory_addTaskInHistoryManager() {
         historyManager.add(task1);
         taskManager.updateTask(updatedTask);
         historyManager.add(updatedTask);
@@ -51,7 +51,7 @@ class InMemoryHistoryManagerTest {
 
     //ТЗ-6 Проверка того, что встроенный связный список версий, добавляет задачи
     @Test
-    public void equals_returnTrue_IfAddTasksInHistory() {
+    public void getTaskById_returnOneTask_ifAddTasksInHistory() {
         taskManager.getTaskById(task1.getId());
         int result = taskManager.getHistory().size();
         assertEquals(1, result, "Cвязный список версий должен добавлять задачи");
@@ -59,7 +59,7 @@ class InMemoryHistoryManagerTest {
 
     //ТЗ-6 Проверка того, что встроенный связный список версий удаляет задачи
     @Test
-    public void equals_returnTrue_IfDeleteTasksFromHistory() {
+    public void deleteTaskById_returnOneTask_ifDeleteTasksFromHistory() {
         taskManager.getTaskById(task1.getId());
         taskManager.getTaskById(task2.getId());
         taskManager.deleteTaskById(task1.getId());
@@ -69,7 +69,7 @@ class InMemoryHistoryManagerTest {
 
     //ТЗ-6 Проверка того, что встроенный связный список версий хранит только уникальные записи
     @Test
-    public void equals_returnTrue_IfTasksInHistoryIsUnique() {
+    public void getHistory_returnOneTask_ifTasksInHistoryIsUnique() {
         taskManager.getTaskById(task1.getId());
         taskManager.getTaskById(task1.getId());
         taskManager.getTaskById(task1.getId());
@@ -79,7 +79,7 @@ class InMemoryHistoryManagerTest {
 
     //ТЗ-6 Проверка на дублирование задач в списке
     @Test
-    public void equals_returnTrue_IfTasksInHistoryNotDuplicate() {
+    public void getHistory_returnHistoryTask_ifTasksInHistoryNotDuplicate() {
         List<Task> historyTask = new ArrayList<>();
         historyTask.add(task1);
         historyManager.add(task1);

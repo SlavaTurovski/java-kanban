@@ -10,7 +10,7 @@ class TaskTest {
 
     //1-Проверка того что экземпляры класса Task равны друг другу, если равен их id
     @Test
-    public void setId_equalsReturnTrue_idIsSame() {
+    public void set_returnTrue_idIsSame() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         Task task2 = new Task("Задача-2", "Описание задачи-2", Status.NEW);
         task1.setId(1);
@@ -20,7 +20,7 @@ class TaskTest {
 
     //ТЗ-6 Проверка на изменение задач сеттерами
     @Test
-    public void set_equalsReturnTrue_updateTaskFields() {
+    public void set_returnTrue_updateTaskFields() {
         Task task1 = new Task("Задача-1", "Описание задачи-1", Status.NEW);
         task1.setName("Новая Задача");
         task1.setDescription("Новое описание задачи");
