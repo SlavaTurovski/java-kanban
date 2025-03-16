@@ -5,6 +5,7 @@ import tasks.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
+import java.util.Collection;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -58,7 +59,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
             }
 
-            manager.subtasks.values().stream()
+            manager.subtasks.values()
                     .forEach(subtask -> {
                         Epic epic = manager.epics.get(subtask.getEpicId());
                         epic.getSubtaskIdInEpic().add(subtask.getId());
@@ -77,20 +78,41 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8);
              BufferedWriter writer = new BufferedWriter(fileWriter)) {
-
             writer.write("id,type,name,status,description,duration,startTime,epic_id");
             writer.newLine();
 
-            Stream.concat(getAllTasks().stream(),
-                            Stream.concat(getAllEpics().stream(), getAllSubtasks().stream())
-                    ).map(CSVTaskFormat::toString)
-                    .forEachOrdered(line -> {
+            getAllTasks().stream()
+                    .map(CSVTaskFormat::toString)
+                    .forEach(line -> {
                         try {
                             writer.write(line);
                             writer.newLine();
                         } catch (IOException e) {
-                            throw new ManagerSaveException("Произошла ошибка сохранения задачи!" + e.getMessage());
+                            throw new ManagerSaveException("Произошла ошибка задачи!" + e.getMessage());
                         }
+                    });
+
+            getAllEpics().stream()
+                    .map(CSVTaskFormat::toString)
+                    .forEach(line -> {
+                        try {
+                            writer.write(line);
+                            writer.newLine();
+                        } catch (IOException e) {
+                            throw new ManagerSaveException("Произошла ошибка эпика!" + e.getMessage());
+                        }
+                    });
+
+            getAllSubtasks().stream()
+                    .map(CSVTaskFormat::toString)
+                    .forEach(line -> {
+                        try {
+                            writer.write(line);
+                            writer.newLine();
+                        } catch (IOException e) {
+                            throw new ManagerSaveException("Произошла ошибка подзадачи!" + e.getMessage());
+                        }
+
                     });
 
         } catch (IOException e) {
