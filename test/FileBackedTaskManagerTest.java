@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     @Test
-    void save_saveToEmptyFile() throws IOException {
+    public void save_saveToEmptyFile() throws IOException {
         File file = File.createTempFile("tempFile", ".csv");
         FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
         taskManager.save();
@@ -28,7 +28,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     }
 
     @Test
-    void loadFromFile_loadFromEmptyFile() throws IOException {
+    public void loadFromFile_loadFromEmptyFile() throws IOException {
         File file = File.createTempFile("tempFile", ".csv");
         FileBackedTaskManager taskManager = FileBackedTaskManager.loadFromFile(file);
         assertEquals(taskManager.getAllTasks().size(), 0, "Количество задач не равно 0");

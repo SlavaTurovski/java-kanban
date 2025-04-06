@@ -10,7 +10,7 @@ class EpicTest {
 
     //2-Проверка того что наследники класса Task равны друг другу, если равен их id
     @Test
-    public void setId_returnTrue_idIsSame() {
+    public void equals_compareNotOnlyById() {
         Epic epic1 = new Epic("Эпик-1", "Описание эпика-1", Status.NEW);
         Epic epic2 = new Epic("Эпик-2", "Описание эпика-2", Status.NEW);
         epic1.setId(1);
