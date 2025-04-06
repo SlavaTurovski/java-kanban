@@ -10,7 +10,7 @@ class SubtaskTest {
 
     //2-Проверка того что наследники класса Task равны друг другу, если равен их id
     @Test
-    public void setId_returnTrue_idIsSame() {
+    public void equals_compareNotOnlyById() {
         Subtask subtask = new Subtask("Подзадача-1", "Описание подзадачи-1", Status.NEW, 1);
         Subtask subtask1 = new Subtask("Подзадача-2", "Описание подзадачи-2", Status.NEW, 1);
         subtask.setId(1);
