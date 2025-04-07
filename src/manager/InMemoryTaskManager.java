@@ -61,7 +61,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void validateTime(Task newTask) {
-        if (prioritizedTasks.stream().noneMatch(existing -> isOverlapping(newTask, existing))) {
+        if (prioritizedTasks.stream().anyMatch(existing -> isOverlapping(newTask, existing))) {
             throw new TaskTimeOverlapException("Время выполнения задачи пересекается с существующими задачами!");
         }
     }
