@@ -60,11 +60,17 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private boolean validateTime(Task newTask) {
-        return prioritizedTasks.stream().noneMatch(existing -> isOverlapping(newTask, existing));
+    private void validateTime(Task newTask) {
+        if (prioritizedTasks.stream().noneMatch(existing -> isOverlapping(newTask, existing))) {
+            throw new TaskTimeOverlapException("Время выполнения задачи пересекается с существующими задачами!");
+        }
     }
 
     public boolean isOverlapping(Task newTask, Task existingTask) {
+        if (newTask.getId() == existingTask.getId()) {
+            return false;
+        }
+
         return newTask.getStartTime().isBefore(existingTask.getEndTime()) &&
                 existingTask.getStartTime().isBefore(newTask.getEndTime());
     }
@@ -101,11 +107,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Task addTask(Task task) {
         int taskId = generateId();
         task.setId(taskId);
-
-        if (!validateTime(task)) {
-            throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
-        }
-
+        validateTime(task);
         tasks.put(task.getId(), task);
         addPrioritizedTask(task);
         return task;
@@ -131,11 +133,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         int subtaskId = generateId();
         subtask.setId(subtaskId);
-
-        if (!validateTime(subtask)) {
-            throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
-        }
-
+        validateTime(subtask);
         subtasks.put(subtaskId, subtask);
         epic.getSubtaskIdInEpic().add(subtaskId);
         updateEpic(epic);
@@ -215,10 +213,7 @@ public class InMemoryTaskManager implements TaskManager {
             return task;
         }
 
-        if (!validateTime(task)) {
-            throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
-        }
-
+        validateTime(task);
         tasks.put(task.getId(), task);
         prioritizedTasks.remove(task);
         addPrioritizedTask(task);
@@ -245,10 +240,7 @@ public class InMemoryTaskManager implements TaskManager {
             return null;
         }
 
-        if (!validateTime(subtask)) {
-            throw new TaskTimeOverlapException("Время выполнения задачи пересекаются с существующими задачами.");
-        }
-
+        validateTime(subtask);
         subtasks.put(subtask.getId(), subtask);
         prioritizedTasks.remove(subtask);
         addPrioritizedTask(subtask);
