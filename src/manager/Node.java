@@ -4,7 +4,7 @@ import tasks.Task;
 
 public class Node {
 
-    private Task data;
+    private final Task data;
     private Node next;
     private Node prev;
 
@@ -16,10 +16,6 @@ public class Node {
 
     public Task getData() {
         return data;
-    }
-
-    public void setData(Task data) {
-        this.data = data;
     }
 
     public Node getNext() {
