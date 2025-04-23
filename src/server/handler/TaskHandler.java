@@ -1,7 +1,6 @@
 package server.handler;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import interfaces.TaskManager;
@@ -24,92 +23,93 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-
         String method = exchange.getRequestMethod();
-        String requestPath = exchange.getRequestURI().getPath();
-        String[] pathParts = requestPath.split("/");
+        String[] pathParts = exchange.getRequestURI().getPath().split("/");
 
         switch (method) {
             case "GET":
-                getTasks(exchange, pathParts);
+
+                if (pathParts.length == 3) {
+                    getTaskById(exchange, pathParts);
+                }
+
+                if (pathParts.length == 2) {
+                    getAllTasks(exchange);
+                }
                 break;
+
             case "POST":
-                postTask(exchange);
+
+                if (pathParts.length == 2) {
+                    postUpdateTask(exchange);
+                }
                 break;
+
             case "DELETE":
                 deleteTaskById(exchange, pathParts);
                 break;
+
             default:
                 sendBadRequest(exchange);
                 break;
         }
     }
 
-    public void getTasks(HttpExchange exchange, String[] pathParts) throws IOException {
+    private void getAllTasks(HttpExchange exchange) throws IOException {
         try {
-
-            if (pathParts.length == 2) {
-                List<Task> tasks = taskManager.getAllTasks();
-                String response = gson.toJson(tasks);
-                writeResponse(exchange, "Все задачи: " + "\n" + response, 200);
-
-            } else if (pathParts.length >= 3) {
-                int id = Integer.parseInt(pathParts[2]);
-                Task task = taskManager.getTaskById(id);
-
-                if (task != null) {
-                    String response = gson.toJson(task);
-                    writeResponse(exchange, "Задача с id = " + id + "\n" + response, 200);
-                } else {
-                    sendNotFound(exchange);
-                }
-
-            } else {
-                sendBadRequest(exchange);
-            }
-
-        } catch (IllegalArgumentException e) {
-            sendBadRequest(exchange);
-        }
-
-    }
-
-    public void postTask(HttpExchange exchange) throws IOException {
-
-        InputStream inputStream = exchange.getRequestBody();
-        String stringTask = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-
-        if (stringTask.isEmpty() || stringTask.isBlank()) {
+            List<Task> tasks = taskManager.getAllTasks();
+            String response = gson.toJson(tasks);
+            writeResponse(exchange, "Задачи: " + "\n" + response, 200);
+        } catch (Exception e) {
             sendNotFound(exchange);
         }
+    }
 
+    private void getTaskById(HttpExchange exchange, String[] pathParts) throws IOException {
         try {
-            Task task = gson.fromJson(stringTask, Task.class);
-            try {
-                if (task.getId() == 0) {
-                    taskManager.addTask(task);
-                    writeResponse(exchange, "Задача успешно добавлена! Присвоен id " + task.getId(), 201);
+            int id = Integer.parseInt(pathParts[2]);
+            Task task = taskManager.getTaskById(id);
+            String response = gson.toJson(task);
+            writeResponse(exchange, "Задача с id: " + "\n" + response, 200);
+        } catch (Exception e) {
+            sendNotFound(exchange);
+        }
+    }
+
+    public void postUpdateTask(HttpExchange exchange) throws IOException {
+        try {
+            InputStream inputStream = exchange.getRequestBody();
+            String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            Task task = gson.fromJson(body, Task.class);
+
+            if (task.getId() == null || task.getId() == 0) {
+                taskManager.addTask(task);
+                writeResponse(exchange, "Задача успешно добавлена! Её id =  " + task.getId(), 201);
+            } else {
+
+                if (taskManager.getTaskById(task.getId()) == null) {
+                    sendNotFound(exchange);
                 } else {
                     taskManager.updateTask(task);
-                    writeResponse(exchange, "Задача с id  " + task.getId() + " успешно обновлена!", 201);
+                    writeResponse(exchange, "Задача с id =  " + task.getId() + " успешно обновлена!", 201);
                 }
-            } catch (TaskTimeOverlapException e) {
-                sendTimeOverlap(exchange);
-            } catch (IllegalArgumentException e) {
-                sendBadRequest(exchange);
             }
-        } catch (JsonSyntaxException e) {
-            sendBadRequest(exchange);
-        }
 
+        } catch (TaskTimeOverlapException e) {
+            sendTimeOverlap(exchange);
+
+        } catch (Exception e) {
+        sendNotFound(exchange);
+        }
     }
 
     public void deleteTaskById(HttpExchange exchange, String[] pathParts) throws IOException {
         try {
             int id = Integer.parseInt(pathParts[2]);
-            taskManager.deleteTaskById(id);
+            Task task = taskManager.getTaskById(id);
+            taskManager.deleteTaskById(task.getId());
             writeResponse(exchange, "Задача c id " + id + " успешно удалена!", 200);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             sendNotFound(exchange);
         }
     }
