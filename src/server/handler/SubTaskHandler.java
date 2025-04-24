@@ -106,7 +106,7 @@ public class SubTaskHandler extends BaseHttpHandler implements HttpHandler {
     private void deleteSubtaskById(HttpExchange exchange, String[] pathParts) throws IOException {
         try {
             int id = Integer.parseInt(pathParts[2]);
-            Subtask subtask= taskManager.getSubtaskById(id);
+            Subtask subtask = taskManager.getSubtaskById(id);
             taskManager.deleteSubtaskById(subtask.getId());
             writeResponse(exchange, "Подзадача c id " + id + " успешно удалена!", 200);
         } catch (Exception e) {
