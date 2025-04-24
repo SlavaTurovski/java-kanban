@@ -105,9 +105,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task addTask(Task task) {
-        validateTime(task);
         int taskId = generateId();
         task.setId(taskId);
+        validateTime(task);
         tasks.put(task.getId(), task);
         addPrioritizedTask(task);
         return task;
