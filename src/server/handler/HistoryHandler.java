@@ -30,7 +30,7 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
                     sendNotFound(exchange);
                 }
                 String response = gson.toJson(history);
-                writeResponse(exchange, "История: " + "\n" + response, 200);
+                writeResponse(exchange, response, 200);
 
             } catch (IOException e) {
                 sendNotFound(exchange);

@@ -59,7 +59,7 @@ public class SubTaskHandler extends BaseHttpHandler implements HttpHandler {
         try {
             List<Subtask> subtasks = taskManager.getAllSubtasks();
             String response = gson.toJson(subtasks);
-            writeResponse(exchange, "Подзадачи: " + "\n" + response, 200);
+            writeResponse(exchange, response, 200);
         } catch (Exception e) {
             sendNotFound(exchange);
         }
@@ -70,7 +70,7 @@ public class SubTaskHandler extends BaseHttpHandler implements HttpHandler {
             int id = Integer.parseInt(pathParts[2]);
             Subtask subtask = taskManager.getSubtaskById(id);
             String response = gson.toJson(subtask);
-            writeResponse(exchange, "Подзадача с id: " + "\n" + response, 200);
+            writeResponse(exchange, response, 200);
         } catch (Exception e) {
             sendNotFound(exchange);
         }

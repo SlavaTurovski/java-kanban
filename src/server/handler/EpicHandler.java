@@ -63,7 +63,7 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
         try {
             List<Epic> epic = taskManager.getAllEpics();
             String response = gson.toJson(epic);
-            writeResponse(exchange, "Эпики: " + "\n" + response, 200);
+            writeResponse(exchange, response, 200);
         } catch (Exception e) {
             sendNotFound(exchange);
         }
@@ -74,7 +74,7 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
             int id = Integer.parseInt(pathParts[2]);
             Epic epic = taskManager.getEpicById(id);
             String response = gson.toJson(epic);
-            writeResponse(exchange, "Эпик с id: " + "\n" + response, 200);
+            writeResponse(exchange, response, 200);
         } catch (Exception e) {
             sendNotFound(exchange);
         }
@@ -86,7 +86,7 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
             Epic epic = taskManager.getEpicById(id);
             List<Subtask> subtasks = taskManager.getSubtasksByEpicId(epic.getId());
             String response = gson.toJson(subtasks);
-            writeResponse(exchange, "Подзадачи с эпик id = " + id + "\n" + response, 200);
+            writeResponse(exchange, response, 200);
         } catch (Exception e) {
             sendNotFound(exchange);
         }

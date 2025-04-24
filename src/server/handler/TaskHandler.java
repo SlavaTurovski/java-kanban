@@ -59,7 +59,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
         try {
             List<Task> tasks = taskManager.getAllTasks();
             String response = gson.toJson(tasks);
-            writeResponse(exchange, "Задачи: " + "\n" + response, 200);
+            writeResponse(exchange, response, 200);
         } catch (Exception e) {
             sendNotFound(exchange);
         }
@@ -70,7 +70,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
             int id = Integer.parseInt(pathParts[2]);
             Task task = taskManager.getTaskById(id);
             String response = gson.toJson(task);
-            writeResponse(exchange, "Задача с id: " + "\n" + response, 200);
+            writeResponse(exchange, response, 200);
         } catch (Exception e) {
             sendNotFound(exchange);
         }
